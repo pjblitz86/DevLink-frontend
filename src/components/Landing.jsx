@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 
 const Landing = () => {
   return (
@@ -11,12 +12,12 @@ const Landing = () => {
             other developers
           </p>
           <div className='buttons'>
-            <a href='register.html' className='btn btn-primary'>
-              Sign Up
-            </a>
-            <a href='login.html' className='btn btn-light'>
+            <NavLink to='/register' className='btn btn-primary'>
+              Register
+            </NavLink>
+            <NavLink to='/login' className='btn btn-light'>
               Login
-            </a>
+            </NavLink>
           </div>
         </div>
       </div>

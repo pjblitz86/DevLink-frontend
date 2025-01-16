@@ -1,4 +1,5 @@
 import React from 'react';
+import './App.css';
 import {
   Route,
   createBrowserRouter,
@@ -7,12 +8,15 @@ import {
 } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import LandingPage from './pages/LandingPage';
-import './App.css';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<MainLayout />}>
       <Route index element={<LandingPage />} />
+      <Route path='/login' element={<Login />} />
+      <Route path='/register' element={<Register />} />
     </Route>
   )
 );
