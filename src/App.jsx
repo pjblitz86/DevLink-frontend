@@ -1,15 +1,24 @@
 import React from 'react';
-import Navbar from './components/layout/Navbar';
-import Landing from './components/layout/Landing';
+import {
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider
+} from 'react-router-dom';
+import MainLayout from './layouts/MainLayout';
+import LandingPage from './pages/LandingPage';
 import './App.css';
 
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path='/' element={<MainLayout />}>
+      <Route index element={<LandingPage />} />
+    </Route>
+  )
+);
+
 const App = () => {
-  return (
-    <>
-      <Navbar />
-      <Landing />
-    </>
-  );
+  return <RouterProvider router={router} />;
 };
 
 export default App;
