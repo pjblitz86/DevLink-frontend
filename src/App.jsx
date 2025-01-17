@@ -10,6 +10,7 @@ import MainLayout from './layouts/MainLayout';
 import LandingPage from './pages/LandingPage';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import Alert from './layouts/Alert';
 import { Provider } from 'react-redux';
 import store from './store';
 
@@ -26,7 +27,8 @@ const router = createBrowserRouter(
 const App = () => {
   return (
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <Alert />
+      <RouterProvider router={router}></RouterProvider>
     </Provider>
   );
 };
