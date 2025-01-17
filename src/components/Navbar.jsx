@@ -15,6 +15,12 @@ const Navbar = () => {
           <a href='!#'>Developers</a>
         </li>
         <li>
+          <NavLink to='/dashboard'>
+            <i className='fas fa-user' />{' '}
+            <span className='hide-sm'>Dashboard</span>
+          </NavLink>
+        </li>
+        <li>
           <NavLink to='/register'>Register</NavLink>
         </li>
         <li>

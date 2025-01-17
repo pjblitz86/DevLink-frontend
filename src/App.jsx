@@ -10,6 +10,7 @@ import MainLayout from './layouts/MainLayout';
 import LandingPage from './pages/LandingPage';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import Dashboard from './components/dashboard/Dashboard';
 import Alert from './layouts/Alert';
 import { Provider } from 'react-redux';
 import store from './store';
@@ -20,6 +21,7 @@ const router = createBrowserRouter(
       <Route index element={<LandingPage />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
+      <Route path='/dashboard' element={<Dashboard />} />
     </Route>
   )
 );
