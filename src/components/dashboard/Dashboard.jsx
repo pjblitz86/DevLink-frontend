@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import DashboardActions from './DashboardActions';
 
 const Dashboard = (props) => {
   // TODO: add spinner if no profile and loading
@@ -12,6 +13,7 @@ const Dashboard = (props) => {
       </p>
       {/* Add later profile !== null ? and full profile once auth is done */}
       <>
+        <DashboardActions />
         <p>You have not yet setup a profile, please add some info</p>
         <Link to='/create-profile' className='btn btn-primary my-1'>
           Create Profile

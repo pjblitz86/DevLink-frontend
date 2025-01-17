@@ -1,24 +1,22 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+
+const [formData, setFormData] = useState({
+  company: '',
+  website: '',
+  location: '',
+  status: '',
+  skills: '',
+  githubusername: '',
+  bio: '',
+  twitter: '',
+  facebook: '',
+  linkedin: '',
+  youtube: '',
+  instagram: ''
+});
 
 const CreateProfile = (props) => {
-  const [formData, setFormData] = useState({
-    company: '',
-    website: '',
-    location: '',
-    status: '',
-    skills: '',
-    githubusername: '',
-    bio: '',
-    twitter: '',
-    facebook: '',
-    linkedin: '',
-    youtube: '',
-    instagram: ''
-  });
-
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
-
   const {
     company,
     website,
@@ -37,15 +35,21 @@ const CreateProfile = (props) => {
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  const onSubmit = (e) => {
+    e.preventDefault();
+    // TODO: submit redux action
+  };
+
   return (
     <section className='container'>
       <h1 className='large text-primary'>Create Your Profile</h1>
       <p className='lead'>
+        {/* TODO: add logic if we're creating or editing profile */}
         <i className='fas fa-user'></i> Let's get some information to make your
         profile stand out
       </p>
       <small>* = required field</small>
-      <form className='form'>
+      <form className='form' onSubmit={(e) => onSubmit(e)}>
         <div className='form-group'>
           <select name='status' value={status} onChange={(e) => onChange(e)}>
             <option value='0'>* Select Professional Status</option>

@@ -24,6 +24,7 @@ const router = createBrowserRouter(
       <Route path='/register' element={<Register />} />
       <Route path='/dashboard' element={<Dashboard />} />
       <Route path='/create-profile' element={<ProfileForm />} />
+      <Route path='/edit-profile' element={<ProfileForm />} />
     </Route>
   )
 );
