@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 
-const [formData, setFormData] = useState({
-  company: '',
-  website: '',
-  location: '',
-  status: '',
-  skills: '',
-  githubusername: '',
-  bio: '',
-  twitter: '',
-  facebook: '',
-  linkedin: '',
-  youtube: '',
-  instagram: ''
-});
-
 const CreateProfile = (props) => {
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
+  const [formData, setFormData] = useState({
+    company: '',
+    website: '',
+    location: '',
+    status: '',
+    skills: '',
+    githubusername: '',
+    bio: '',
+    twitter: '',
+    facebook: '',
+    linkedin: '',
+    youtube: '',
+    instagram: ''
+  });
   const {
     company,
     website,
@@ -208,7 +207,7 @@ const CreateProfile = (props) => {
         )}
 
         <input type='submit' className='btn btn-primary my-1' />
-        <a className='btn btn-light my-1' href='dashboard.html'>
+        <a className='btn btn-light my-1' to='/dashboard'>
           Go Back
         </a>
       </form>

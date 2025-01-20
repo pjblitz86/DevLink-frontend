@@ -12,6 +12,7 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
 import ProfileForm from './components/profile-forms/ProfileForm';
+import AddExperience from './components/profile-forms/AddExperience';
 import Alert from './layouts/Alert';
 import { Provider } from 'react-redux';
 import store from './store';
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
       <Route path='/dashboard' element={<Dashboard />} />
       <Route path='/create-profile' element={<ProfileForm />} />
       <Route path='/edit-profile' element={<ProfileForm />} />
+      <Route path='/add-experience' element={<AddExperience />} />
     </Route>
   )
 );
