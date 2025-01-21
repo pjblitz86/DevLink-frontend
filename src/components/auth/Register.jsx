@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '../../features/alertSlice';
+import { register } from '../../features/authSlice';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -23,27 +23,11 @@ const Register = () => {
     if (password !== password2) {
       dispatch(showAlert('Passwords do not match', 'danger'));
     } else {
-      const newUser = {
-        name,
-        email,
-        password
-      };
-
-      try {
-        const config = {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        };
-
-        const body = JSON.stringify(newUser);
-        const res = await axios.post('/api/register', body, config);
-        console.log(res.data);
-        dispatch(showAlert('User registered successfully', 'success'));
-      } catch (err) {
-        console.log(err.response.data);
-        dispatch(showAlert(err.response.data.msg, 'danger'));
-      }
+      dispatch(register({ name, email, password }))
+        .unwrap()
+        .catch((errors) => {
+          console.error(errors);
+        });
     }
   };
 
@@ -62,7 +46,6 @@ const Register = () => {
               name='name'
               value={name}
               onChange={(e) => onChange(e)}
-              required
             />
           </div>
           <div className='form-group'>
@@ -72,7 +55,6 @@ const Register = () => {
               name='email'
               value={email}
               onChange={(e) => onChange(e)}
-              required
             />
             <small className='form-text'>
               This site uses Gravatar so if you want a profile image, use a
@@ -87,7 +69,6 @@ const Register = () => {
               minLength='6'
               value={password}
               onChange={(e) => onChange(e)}
-              required
             />
           </div>
           <div className='form-group'>
@@ -98,7 +79,6 @@ const Register = () => {
               minLength='6'
               value={password2}
               onChange={(e) => onChange(e)}
-              required
             />
           </div>
           <input type='submit' className='btn btn-primary' value='Register' />

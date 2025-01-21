@@ -34,6 +34,17 @@ const router = createBrowserRouter(
 );
 
 const App = () => {
+  // useEffect(() => {
+  //   if (localStorage.token) {
+  //     setAuthToken(localStorage.token);
+  //   }
+  //   store.dispatch(loadUser());
+
+  //   window.addEventListener('storage', () => {
+  //     if (!localStorage.token) store.dispatch({ type: LOGOUT });
+  //   });
+  // }, []);
+
   return (
     <Provider store={store}>
       <Alert />
