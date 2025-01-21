@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { thunk } from 'redux-thunk';
-import rootReducer from './reducers';
+import alertSlice from './features/alertSlice';
 
 const store = configureStore({
-  reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+  reducer: {
+    alert: alertSlice
+  },
   devTools: process.env.NODE_ENV !== 'production' // Enable DevTools only in development mode
 });
 

@@ -11,8 +11,7 @@ const Navbar = () => {
       </h1>
       <ul>
         <li>
-          {/* TODO */}
-          <a href='!#'>Developers</a>
+          <NavLink to='/profiles'>Developers</NavLink>
         </li>
         <li>
           <NavLink to='/dashboard'>
