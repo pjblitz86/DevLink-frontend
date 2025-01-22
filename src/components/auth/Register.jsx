@@ -31,12 +31,7 @@ const Register = () => {
     if (password !== password2) {
       dispatch(showAlert('Passwords do not match', 'danger'));
     } else {
-      const result = dispatch(register({ name, email, password }));
-      if (result.meta.requestStatus === 'fulfilled') {
-        dispatch(loadUser());
-        dispatch(showAlert('Registration successful', 'success'));
-        navigate('/dashboard');
-      }
+      dispatch(register({ name, email, password }));
     }
   };
 

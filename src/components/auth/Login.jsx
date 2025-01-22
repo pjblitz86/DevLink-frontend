@@ -27,11 +27,6 @@ const Login = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     dispatch(login({ email, password }));
-    if (result.meta.requestStatus === 'fulfilled') {
-      dispatch(loadUser());
-      dispatch(showAlert('Login successful', 'success'));
-      navigate('/dashboard');
-    }
   };
 
   return (
