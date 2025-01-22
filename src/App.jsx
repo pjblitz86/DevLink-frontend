@@ -14,6 +14,7 @@ import Dashboard from './components/dashboard/Dashboard';
 import ProfileForm from './components/profile-forms/ProfileForm';
 import AddExperience from './components/profile-forms/AddExperience';
 import AddEducation from './components/profile-forms/AddEducation';
+import PrivateRoute from './components/auth/PrivateRoute';
 import Alert from './layouts/Alert';
 import { Provider, useDispatch } from 'react-redux';
 import store from './store';
@@ -26,7 +27,11 @@ const router = createBrowserRouter(
       <Route index element={<LandingPage />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
-      <Route path='/dashboard' element={<Dashboard />} />
+      <Route path='/register' element={<Register />} />
+      <Route
+        path='/dashboard'
+        element={<PrivateRoute element={<Dashboard />} />}
+      />
       <Route path='/create-profile' element={<ProfileForm />} />
       <Route path='/edit-profile' element={<ProfileForm />} />
       <Route path='/add-experience' element={<AddExperience />} />
