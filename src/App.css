@@ -321,9 +321,14 @@ button {
   color: #fff;
   padding: 0.45rem;
   margin: 0 0.25rem;
+  text-decoration: none;
 }
 
 .navbar a:hover {
+  color: var(--primary-color);
+}
+
+.navbar .active {
   color: var(--primary-color);
 }
 
