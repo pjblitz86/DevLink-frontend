@@ -21,6 +21,7 @@ export const register = createAsyncThunk(
       const body = JSON.stringify({ name, email, password });
       const res = await axios.post('/api/register', body, config);
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('userId', res.data.data.id);
       dispatch(showAlert('Registration successful', 'success'));
       return res.data;
     } catch (err) {
@@ -49,6 +50,7 @@ export const login = createAsyncThunk(
       const body = JSON.stringify({ email, password });
       const res = await axios.post('/api/login', body, config);
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('userId', res.data.data.id);
       dispatch(showAlert('Login successful', 'success'));
       return res.data;
     } catch (err) {

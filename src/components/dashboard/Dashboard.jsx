@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import DashboardActions from './DashboardActions';
+import { getCurrentUserProfile } from '../../features/profileSlice';
+import Spinner from '../../layouts/Spinner';
 
-const Dashboard = (props) => {
-  // TODO: add spinner if no profile and loading
+const Dashboard = () => {
+  const dispatch = useDispatch();
+  const { profile, loading, error } = useSelector((state) => state.profile);
+
+  useEffect(() => {
+    dispatch(getCurrentUserProfile());
+  }, [dispatch]);
+
+  if (loading) return <Spinner />;
+
   return (
     <section className='container'>
       <h1 className='large text-primary'>Dashboard</h1>
@@ -11,7 +22,6 @@ const Dashboard = (props) => {
         {/* TODO: get user from db */}
         <i className='fas fa-user' /> Welcome, user placeholder
       </p>
-      {/* Add later profile !== null ? and full profile once auth is done */}
       <>
         <DashboardActions />
         <p>You have not yet setup a profile, please add some info</p>
