@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import {
   Route,
@@ -15,8 +15,10 @@ import ProfileForm from './components/profile-forms/ProfileForm';
 import AddExperience from './components/profile-forms/AddExperience';
 import AddEducation from './components/profile-forms/AddEducation';
 import Alert from './layouts/Alert';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import store from './store';
+import { loadUser } from './features/authSlice';
+import api from './utils/api';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,17 +36,14 @@ const router = createBrowserRouter(
 );
 
 const App = () => {
-  // useEffect(() => {
-  //   if (localStorage.token) {
-  //     setAuthToken(localStorage.token);
-  //   }
-  //   store.dispatch(loadUser());
-
-  //   window.addEventListener('storage', () => {
-  //     if (!localStorage.token) store.dispatch({ type: LOGOUT });
-  //   });
-  // }, []);
-
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      api.defaults.headers.common['x-auth-token'] = token;
+      dispatch(loadUser());
+    }
+  }, [dispatch]);
   return (
     <Provider store={store}>
       <Alert />

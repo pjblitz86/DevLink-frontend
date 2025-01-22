@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../features/alertSlice';
 import { register } from '../../features/authSlice';
 
@@ -14,6 +14,14 @@ const Register = () => {
 
   const { name, email, password, password2 } = formData;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,11 +31,7 @@ const Register = () => {
     if (password !== password2) {
       dispatch(showAlert('Passwords do not match', 'danger'));
     } else {
-      dispatch(register({ name, email, password }))
-        .unwrap()
-        .catch((errors) => {
-          console.error(errors);
-        });
+      dispatch(register({ name, email, password }));
     }
   };
 
@@ -46,6 +50,7 @@ const Register = () => {
               name='name'
               value={name}
               onChange={(e) => onChange(e)}
+              required
             />
           </div>
           <div className='form-group'>
@@ -55,6 +60,7 @@ const Register = () => {
               name='email'
               value={email}
               onChange={(e) => onChange(e)}
+              required
             />
             <small className='form-text'>
               This site uses Gravatar so if you want a profile image, use a
@@ -69,6 +75,7 @@ const Register = () => {
               minLength='6'
               value={password}
               onChange={(e) => onChange(e)}
+              required
             />
           </div>
           <div className='form-group'>
@@ -79,6 +86,7 @@ const Register = () => {
               minLength='6'
               value={password2}
               onChange={(e) => onChange(e)}
+              required
             />
           </div>
           <input type='submit' className='btn btn-primary' value='Register' />
