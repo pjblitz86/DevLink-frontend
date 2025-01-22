@@ -37,17 +37,23 @@ export const register = createAsyncThunk(
   }
 );
 
-export const loginUser = createAsyncThunk(
-  'auth/loginUser',
-  async ({ email, password }, { rejectWithValue }) => {
+export const login = createAsyncThunk(
+  'auth/login',
+  async ({ email, password }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.post('/login', { email, password });
-      // Set token in localStorage and axios headers
+      const config = {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      };
+      const body = JSON.stringify({ email, password });
+      const res = await axios.post('/api/login', body, config);
       localStorage.setItem('token', res.data.token);
-      api.defaults.headers.common['x-auth-token'] = res.data.token;
+      dispatch(showAlert('Login successful', 'success'));
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data);
+      dispatch(showAlert('Login failed', 'danger'));
+      return rejectWithValue(err.response?.data || 'Login failed');
     }
   }
 );
@@ -77,61 +83,56 @@ export const loadUser = createAsyncThunk(
   }
 );
 
+const handleAuthSuccess = (state, action) => {
+  state.isAuthenticated = true;
+  state.loading = false;
+  state.token = action.payload.token;
+  state.user = action.payload.user;
+};
+
+const handleAuthFailure = (state) => {
+  state.isAuthenticated = false;
+  state.loading = false;
+  state.token = null;
+  state.user = null;
+  localStorage.removeItem('token');
+};
+
+const handleUserLoadSuccess = (state, action) => {
+  state.isAuthenticated = true;
+  state.loading = false;
+  state.user = action.payload;
+};
+
+const handleUserLoadFailure = (state) => {
+  state.isAuthenticated = false;
+  state.loading = false;
+  state.user = null;
+};
+
+const handleLogout = (state) => {
+  state.isAuthenticated = false;
+  state.loading = false;
+  state.token = null;
+  state.user = null;
+  localStorage.removeItem('token');
+};
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout: (state) => {
-      state.token = null;
-      state.isAuthenticated = false;
-      state.loading = false;
-      state.user = null;
-      localStorage.removeItem('token');
-    }
+    logout: handleLogout
   },
   extraReducers: (builder) => {
-    builder.addCase(register.fulfilled, (state, action) => {
-      state.isAuthenticated = true;
-      state.loading = false;
-      state.token = action.payload.token;
-      state.user = action.payload.user;
-    });
-    builder.addCase(register.rejected, (state) => {
-      state.isAuthenticated = false;
-      state.loading = false;
-      state.token = null;
-      state.user = null;
-      localStorage.removeItem('token');
-    });
-    builder.addCase(loadUser.fulfilled, (state, action) => {
-      state.isAuthenticated = true;
-      state.loading = false;
-      state.user = action.payload;
-    });
-    builder.addCase(loadUser.rejected, (state) => {
-      state.isAuthenticated = false;
-      state.loading = false;
-      state.user = null;
-    });
     builder
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.isAuthenticated = true;
-        state.loading = false;
-        state.token = action.payload.token;
-        state.user = action.payload.user;
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.isAuthenticated = false;
-        state.loading = false;
-        state.token = null;
-        state.user = null;
-      })
-      .addCase(logoutUser.fulfilled, (state) => {
-        state.isAuthenticated = false;
-        state.loading = false;
-        state.token = null;
-        state.user = null;
-      });
+      .addCase(register.fulfilled, handleAuthSuccess)
+      .addCase(register.rejected, handleAuthFailure)
+      .addCase(login.fulfilled, handleAuthSuccess)
+      .addCase(login.rejected, handleAuthFailure)
+      .addCase(loadUser.fulfilled, handleUserLoadSuccess)
+      .addCase(loadUser.rejected, handleUserLoadFailure)
+      .addCase(logoutUser.fulfilled, handleLogout);
   }
 });
 

@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { showAlert } from '../../features/alertSlice';
+import { login } from '../../features/authSlice';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -8,13 +11,27 @@ const Login = () => {
   });
 
   const { email, password } = formData;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log('Success');
+    dispatch(login({ email, password }));
+    if (result.meta.requestStatus === 'fulfilled') {
+      dispatch(loadUser());
+      dispatch(showAlert('Login successful', 'success'));
+      navigate('/dashboard');
+    }
   };
 
   return (
