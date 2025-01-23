@@ -16,8 +16,7 @@ import AddExperience from './components/profile-forms/AddExperience';
 import AddEducation from './components/profile-forms/AddEducation';
 import PrivateRoute from './components/auth/PrivateRoute';
 import Alert from './layouts/Alert';
-import { Provider, useDispatch } from 'react-redux';
-import store from './store';
+import { useDispatch } from 'react-redux';
 import { loadUser } from './features/authSlice';
 import { logout } from './features/authSlice';
 import api from './utils/api';
@@ -46,7 +45,7 @@ const App = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      api.defaults.headers.common['x-auth-token'] = token;
+      api.defaults.headers.common['x-auth-token'] = `Bearer ${token}`;
       dispatch(loadUser());
     }
 
@@ -63,10 +62,10 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <Provider store={store}>
+    <>
       <Alert />
       <RouterProvider router={router}></RouterProvider>
-    </Provider>
+    </>
   );
 };
 

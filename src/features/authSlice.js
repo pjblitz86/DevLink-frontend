@@ -63,14 +63,13 @@ export const loadUser = createAsyncThunk(
   'auth/loadUser',
   async (_, { rejectWithValue }) => {
     try {
-      console.log('Loading user...');
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
 
       if (!token || !userId) {
         throw new Error('Token or user ID is missing');
       }
-      api.defaults.headers.common['x-auth-token'] = token;
+      api.defaults.headers.common['x-auth-token'] = `Bearer ${token}`;
       const res = await api.get(`/user/${userId}`);
       console.log('User loaded:', res.data);
       return res.data;
@@ -104,6 +103,7 @@ const handleUserLoadSuccess = (state, action) => {
 const handleUserLoadFailure = (state) => {
   state.isAuthenticated = false;
   state.loading = false;
+  state.user = null;
 };
 
 const handleLogout = (state) => {

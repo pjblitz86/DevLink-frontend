@@ -17,7 +17,8 @@ export const getCurrentUserProfile = createAsyncThunk(
       if (!res.data || !res.data.data) {
         return null; // Profile not found which is ok
       }
-      return res.data.data;
+
+      return res.data;
     } catch (err) {
       return rejectWithValue({
         msg: err.response?.statusText || err.message,

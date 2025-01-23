@@ -2,33 +2,53 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DashboardActions from './DashboardActions';
-import { getCurrentUserProfile } from '../../features/profileSlice';
+import {
+  getCurrentUserProfile,
+  deleteAccount
+} from '../../features/profileSlice';
 import Spinner from '../../layouts/Spinner';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const { profile, loading } = useSelector((state) => state.profile);
+  const { profile, loading: profileLoading } = useSelector(
+    (state) => state.profile
+  );
+  const { user, loading: authLoading } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(getCurrentUserProfile());
   }, [dispatch]);
 
-  if (loading) return <Spinner />;
+  if (profileLoading || authLoading) return <Spinner />;
+  console.log('Profile State:', profile);
+  console.log('Auth State:', user);
 
   return (
     <section className='container'>
       <h1 className='large text-primary'>Dashboard</h1>
       <p className='lead'>
-        {/* TODO: get user from db */}
-        <i className='fas fa-user' /> Welcome, user placeholder
+        <i className='fas fa-user' /> Welcome, {user?.name || 'user'}
       </p>
-      <>
-        <DashboardActions />
-        <p>You have not yet setup a profile, please add some info</p>
-        <Link to='/create-profile' className='btn btn-primary my-1'>
-          Create Profile
-        </Link>
-      </>
+      {profile !== null ? (
+        <>
+          <DashboardActions />
+          <div className='my-2'>
+            <button
+              className='btn btn-danger'
+              onClick={() => dispatch(deleteAccount())}
+            >
+              <i className='fas fa-user-minus' /> Delete My Account
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p>You have not yet setup a profile, please add some info</p>
+          <Link to='/create-profile' className='btn btn-primary my-1'>
+            Create Profile
+          </Link>
+        </>
+      )}
     </section>
   );
 };
