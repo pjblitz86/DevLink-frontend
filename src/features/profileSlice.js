@@ -7,16 +7,17 @@ export const getCurrentUserProfile = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const userId = localStorage.getItem('userId');
-      const token = localStorage.getItem('token');
       if (!userId) {
-        throw new Error('User ID not found in local storage');
+        return rejectWithValue({
+          msg: 'User ID not found in local storage',
+          status: 400
+        });
       }
-      const res = await api.get(`/profile/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return res.data;
+      const res = await api.get(`/profile/${userId}`);
+      if (!res.data || !res.data.data) {
+        return null; // Profile not found which is ok
+      }
+      return res.data.data;
     } catch (err) {
       return rejectWithValue({
         msg: err.response?.statusText || err.message,

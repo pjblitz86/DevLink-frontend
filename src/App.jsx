@@ -19,6 +19,7 @@ import Alert from './layouts/Alert';
 import { Provider, useDispatch } from 'react-redux';
 import store from './store';
 import { loadUser } from './features/authSlice';
+import { logout } from './features/authSlice';
 import api from './utils/api';
 
 const router = createBrowserRouter(
@@ -48,7 +49,19 @@ const App = () => {
       api.defaults.headers.common['x-auth-token'] = token;
       dispatch(loadUser());
     }
+
+    const handleStorageChange = () => {
+      console.log('Storage changed:', localStorage.getItem('token')); // Debugging
+      if (!localStorage.getItem('token')) {
+        dispatch(logout());
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, [dispatch]);
+
   return (
     <Provider store={store}>
       <Alert />

@@ -7,7 +7,7 @@ import Spinner from '../../layouts/Spinner';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const { profile, loading, error } = useSelector((state) => state.profile);
+  const { profile, loading } = useSelector((state) => state.profile);
 
   useEffect(() => {
     dispatch(getCurrentUserProfile());

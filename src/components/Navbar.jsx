@@ -54,7 +54,7 @@ const Navbar = () => {
     <nav className='navbar bg-dark'>
       <h1>
         <Link to='/'>
-          <i className='fas fa-code' /> DevConnector
+          <i className='fas fa-code' /> DevLink
         </Link>
       </h1>
       <>{isAuthenticated ? authLinks : guestLinks}</>

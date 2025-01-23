@@ -5,6 +5,7 @@ import Spinner from '../../layouts/Spinner';
 
 const PrivateRoute = ({ element }) => {
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
+  console.log('PrivateRoute:', { isAuthenticated, loading });
   if (loading) return <Spinner />;
   if (!isAuthenticated) return <Navigate to='/login' />;
 

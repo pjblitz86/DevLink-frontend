@@ -2,13 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { showAlert } from './alertSlice';
 
-const initialState = {
-  token: localStorage.getItem('token'),
-  isAuthenticated: null,
-  loading: true,
-  user: null
-};
-
 export const register = createAsyncThunk(
   'auth/register',
   async ({ name, email, password }, { dispatch, rejectWithValue }) => {
@@ -68,8 +61,9 @@ export const logoutUser = createAsyncThunk('auth/logoutUser', async () => {
 
 export const loadUser = createAsyncThunk(
   'auth/loadUser',
-  async (_, { dispatch, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
+      console.log('Loading user...');
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
 
@@ -78,6 +72,7 @@ export const loadUser = createAsyncThunk(
       }
       api.defaults.headers.common['x-auth-token'] = token;
       const res = await api.get(`/user/${userId}`);
+      console.log('User loaded:', res.data);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || 'Failed to load user');
@@ -109,7 +104,6 @@ const handleUserLoadSuccess = (state, action) => {
 const handleUserLoadFailure = (state) => {
   state.isAuthenticated = false;
   state.loading = false;
-  state.user = null;
 };
 
 const handleLogout = (state) => {
@@ -118,11 +112,17 @@ const handleLogout = (state) => {
   state.token = null;
   state.user = null;
   localStorage.removeItem('token');
+  localStorage.removeItem('userId');
 };
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState,
+  initialState: {
+    token: localStorage.getItem('token'),
+    isAuthenticated: false,
+    loading: true,
+    user: null
+  },
   reducers: {
     logout: handleLogout
   },
