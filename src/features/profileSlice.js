@@ -120,72 +120,104 @@ export const createOrUpdateProfile = createAsyncThunk(
 
 export const addExperience = createAsyncThunk(
   'profile/addExperience',
-  async (formData, { dispatch, rejectWithValue }) => {
+  async ({ profileId, formData }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.put('/profile/experience', formData);
-      dispatch(showAlert('Experience Added', 'success'));
+      const res = await api.post(
+        `/profile/${profileId}/experience/add`,
+        formData
+      );
+      dispatch(showAlert('Experience added successfully', 'success'));
       return res.data;
     } catch (err) {
-      const errors = err.response.data.errors;
-      if (errors) {
-        errors.forEach((error) => dispatch(showAlert(error.msg, 'danger')));
-      }
-      return rejectWithValue({
-        msg: err.response.statusText,
-        status: err.response.status
-      });
+      console.error('Error adding experience:', err);
+      dispatch(showAlert('Failed to add experience', 'danger'));
+      return rejectWithValue(err.response?.data || 'Failed to add experience');
     }
   }
 );
 
-export const addEducation = createAsyncThunk(
-  'profile/addEducation',
-  async (formData, { dispatch, rejectWithValue }) => {
+export const updateExperience = createAsyncThunk(
+  'profile/updateExperience',
+  async ({ experienceId, formData }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.put('/profile/education', formData);
-      dispatch(showAlert('Education Added', 'success'));
+      const res = await api.put(`/experience/${experienceId}`, formData);
+      dispatch(showAlert('Experience updated successfully', 'success'));
       return res.data;
     } catch (err) {
-      const errors = err.response.data.errors;
-      if (errors) {
-        errors.forEach((error) => dispatch(showAlert(error.msg, 'danger')));
-      }
-      return rejectWithValue({
-        msg: err.response.statusText,
-        status: err.response.status
-      });
+      console.error('Error updating experience:', err);
+      dispatch(showAlert('Failed to update experience', 'danger'));
+      return rejectWithValue(
+        err.response?.data || 'Failed to update experience'
+      );
     }
   }
 );
 
 export const deleteExperience = createAsyncThunk(
   'profile/deleteExperience',
-  async (id, { dispatch, rejectWithValue }) => {
+  async (experienceId, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.delete(`/profile/experience/${id}`);
-      dispatch(showAlert('Experience Removed', 'success'));
+      await api.delete(`/experience/${experienceId}`);
+      dispatch(showAlert('Experience removed successfully', 'success'));
+      return experienceId; // Return ID to remove from local state
+    } catch (err) {
+      console.error('Error deleting experience:', err);
+      dispatch(showAlert('Failed to remove experience', 'danger'));
+      return rejectWithValue(
+        err.response?.data || 'Failed to remove experience'
+      );
+    }
+  }
+);
+
+export const addEducation = createAsyncThunk(
+  'profile/addEducation',
+  async ({ profileId, formData }, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await api.post(
+        `/profile/${profileId}/education/add`,
+        formData
+      );
+      dispatch(showAlert('Education added successfully', 'success'));
       return res.data;
     } catch (err) {
-      return rejectWithValue({
-        msg: err.response.statusText,
-        status: err.response.status
-      });
+      console.error('Error adding education:', err);
+      dispatch(showAlert('Failed to add education', 'danger'));
+      return rejectWithValue(err.response?.data || 'Failed to add education');
+    }
+  }
+);
+
+export const updateEducation = createAsyncThunk(
+  'profile/updateEducation',
+  async ({ educationId, formData }, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await api.put(`/education/${educationId}`, formData);
+      dispatch(showAlert('Education updated successfully', 'success'));
+      return res.data;
+    } catch (err) {
+      console.error('Error updating education:', err);
+      dispatch(showAlert('Failed to update education', 'danger'));
+      return rejectWithValue(
+        err.response?.data || 'Failed to update education'
+      );
     }
   }
 );
 
 export const deleteEducation = createAsyncThunk(
   'profile/deleteEducation',
-  async (id, { dispatch, rejectWithValue }) => {
+  async (educationId, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.delete(`/profile/education/${id}`);
-      dispatch(showAlert('Education Removed', 'success'));
-      return res.data;
+      await api.delete(`/education/${educationId}`);
+      dispatch(showAlert('Education removed successfully', 'success'));
+      return educationId;
     } catch (err) {
-      return rejectWithValue({
-        msg: err.response.statusText,
-        status: err.response.status
-      });
+      console.error('Error deleting education:', err);
+      dispatch(showAlert('Failed to delete education', 'danger'));
+      return rejectWithValue(
+        err.response?.data || 'Failed to delete education'
+      );
     }
   }
 );
@@ -247,19 +279,41 @@ const profileSlice = createSlice({
         state.loading = false;
       })
       .addCase(addExperience.fulfilled, (state, action) => {
-        state.profile = action.payload;
+        state.profile.experiences.push(action.payload);
+        state.loading = false;
+      })
+      .addCase(updateExperience.fulfilled, (state, action) => {
+        const index = state.profile.experiences.findIndex(
+          (exp) => exp.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.profile.experiences[index] = action.payload;
+        }
         state.loading = false;
       })
       .addCase(addEducation.fulfilled, (state, action) => {
-        state.profile = action.payload;
+        state.profile.educations.push(action.payload);
+        state.loading = false;
+      })
+      .addCase(updateEducation.fulfilled, (state, action) => {
+        const index = state.profile.educations.findIndex(
+          (edu) => edu.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.profile.educations[index] = action.payload;
+        }
         state.loading = false;
       })
       .addCase(deleteExperience.fulfilled, (state, action) => {
-        state.profile = action.payload;
+        state.profile.experiences = state.profile.experiences.filter(
+          (exp) => exp.id !== action.payload
+        );
         state.loading = false;
       })
       .addCase(deleteEducation.fulfilled, (state, action) => {
-        state.profile = action.payload;
+        state.profile.educations = state.profile.educations.filter(
+          (edu) => edu.id !== action.payload
+        );
         state.loading = false;
       })
       .addCase(deleteAccount.fulfilled, (state) => {
@@ -281,6 +335,18 @@ const profileSlice = createSlice({
         state.loading = false;
       })
       .addCase(getProfileById.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(addEducation.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(updateEducation.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(deleteEducation.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })

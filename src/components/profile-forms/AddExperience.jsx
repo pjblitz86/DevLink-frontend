@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addExperience } from '../../features/profileSlice';
 
 const AddExperience = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     company: '',
     title: '',
@@ -13,10 +16,27 @@ const AddExperience = () => {
     description: ''
   });
 
+  const [toDateDisabled, toggleToDateDisabled] = useState(false);
+
   const { company, title, location, from, to, current, description } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await dispatch(
+        addExperience({
+          profileId: localStorage.getItem('userId'),
+          formData
+        })
+      ).unwrap();
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Failed to add experience:', err);
+    }
+  };
 
   return (
     <section className='container'>
@@ -26,13 +46,7 @@ const AddExperience = () => {
         positions that you have had in the past
       </p>
       <small>* = required field</small>
-      <form
-        className='form'
-        onSubmit={(e) => {
-          e.preventDefault();
-          addExperience(formData).then(() => navigate('/dashboard'));
-        }}
-      >
+      <form className='form' onSubmit={onSubmit}>
         <div className='form-group'>
           <input
             type='text'
@@ -64,7 +78,13 @@ const AddExperience = () => {
         </div>
         <div className='form-group'>
           <h4>From Date</h4>
-          <input type='date' name='from' value={from} onChange={onChange} />
+          <input
+            type='date'
+            name='from'
+            value={from}
+            onChange={onChange}
+            required
+          />
         </div>
         <div className='form-group'>
           <p>
@@ -72,9 +92,9 @@ const AddExperience = () => {
               type='checkbox'
               name='current'
               checked={current}
-              value={current}
-              onChange={() => {
+              onChange={(e) => {
                 setFormData({ ...formData, current: !current });
+                toggleToDateDisabled(!toDateDisabled);
               }}
             />{' '}
             Current Job
@@ -87,7 +107,7 @@ const AddExperience = () => {
             name='to'
             value={to}
             onChange={onChange}
-            disabled={current}
+            disabled={toDateDisabled}
           />
         </div>
         <div className='form-group'>

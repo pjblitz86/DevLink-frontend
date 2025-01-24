@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addEducation } from '../../features/profileSlice';
 
 const AddEducation = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     school: '',
     degree: '',
@@ -13,11 +17,26 @@ const AddEducation = () => {
     description: ''
   });
 
-  const { school, degree, fieldofstudy, from, to, description, current } =
+  const { school, degree, fieldofstudy, from, to, current, description } =
     formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const profileId = localStorage.getItem('userId');
+      if (!profileId) {
+        console.error('Profile ID not found in local storage');
+        return;
+      }
+      await dispatch(addEducation({ profileId, formData })).unwrap();
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Error adding education:', err);
+    }
+  };
 
   return (
     <section className='container'>
@@ -27,13 +46,7 @@ const AddEducation = () => {
         have attended
       </p>
       <small>* = required field</small>
-      <form
-        className='form'
-        onSubmit={(e) => {
-          e.preventDefault();
-          addEducation(formData).then(() => navigate('/dashboard'));
-        }}
-      >
+      <form className='form' onSubmit={onSubmit}>
         <div className='form-group'>
           <input
             type='text'
