@@ -16,10 +16,10 @@ import AddExperience from './components/profile-forms/AddExperience';
 import AddEducation from './components/profile-forms/AddEducation';
 import PrivateRoute from './components/auth/PrivateRoute';
 import Alert from './layouts/Alert';
-import { useDispatch } from 'react-redux';
-import { loadUser } from './features/authSlice';
-import { logout } from './features/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadUser, logout } from './features/authSlice';
 import api from './utils/api';
+import Spinner from './layouts/Spinner';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,45 +27,97 @@ const router = createBrowserRouter(
       <Route index element={<LandingPage />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
-      <Route path='/register' element={<Register />} />
       <Route
         path='/dashboard'
-        element={<PrivateRoute element={<Dashboard />} />}
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
       />
       <Route
         path='/create-profile'
-        element={<PrivateRoute element={<ProfileForm />} />}
+        element={
+          <PrivateRoute>
+            <ProfileForm />
+          </PrivateRoute>
+        }
       />
       <Route
         path='/edit-profile'
-        element={<PrivateRoute element={<ProfileForm />} />}
+        element={
+          <PrivateRoute>
+            <ProfileForm />
+          </PrivateRoute>
+        }
       />
-      <Route path='/add-experience' element={<AddExperience />} />
-      <Route path='/add-education' element={<AddEducation />} />
+      <Route
+        path='/add-experience'
+        element={
+          <PrivateRoute>
+            <AddExperience />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path='/add-education'
+        element={
+          <PrivateRoute>
+            <AddEducation />
+          </PrivateRoute>
+        }
+      />
     </Route>
   )
 );
 
 const App = () => {
   const dispatch = useDispatch();
+  const { isAuthenticated, loading } = useSelector((state) => state.auth);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      api.defaults.headers.common['x-auth-token'] = `Bearer ${token}`;
-      dispatch(loadUser());
-    }
+    console.log('Token on App load:', token);
 
-    const handleStorageChange = () => {
-      console.log('Storage changed:', localStorage.getItem('token')); // Debugging
-      if (!localStorage.getItem('token')) {
-        dispatch(logout());
-      }
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      console.log('Dispatching loadUser...');
+      dispatch(loadUser())
+        .unwrap()
+        .then((data) => {
+          console.log('loadUser succeeded:', data);
+        })
+        .catch((err) => {
+          console.error('loadUser failed:', err);
+        });
+    } else {
+      console.log('No token found, skipping loadUser');
+    }
   }, [dispatch]);
+
+  // useEffect(() => {
+  //   const token = localStorage.getItem('token');
+  //   console.log('Token on App load:', token);
+  //   if (token) {
+  //     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  //     if (!isAuthenticated) {
+  //       dispatch(loadUser());
+  //     }
+  //   }
+
+  //   const handleStorageChange = () => {
+  //     if (!localStorage.getItem('token')) {
+  //       dispatch(logout());
+  //     }
+  //   };
+
+  //   window.addEventListener('storage', handleStorageChange);
+  //   return () => {
+  //     window.removeEventListener('storage', handleStorageChange);
+  //   };
+  // }, [dispatch, isAuthenticated]);
+
+  if (loading) return <Spinner />;
 
   return (
     <>

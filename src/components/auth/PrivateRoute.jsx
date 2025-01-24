@@ -3,13 +3,13 @@ import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Spinner from '../../layouts/Spinner';
 
-const PrivateRoute = ({ element }) => {
+const PrivateRoute = ({ children }) => {
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
   console.log('PrivateRoute:', { isAuthenticated, loading });
   if (loading) return <Spinner />;
   if (!isAuthenticated) return <Navigate to='/login' />;
 
-  return element;
+  return children;
 };
 
 export default PrivateRoute;

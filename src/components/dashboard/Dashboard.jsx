@@ -20,7 +20,6 @@ const Dashboard = () => {
   }, [dispatch]);
 
   if (profileLoading || authLoading) return <Spinner />;
-  console.log('Auth State:', user);
 
   return (
     <section className='container'>

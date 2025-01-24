@@ -1,52 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useMatch, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  createProfile,
+  createOrUpdateProfile,
   getCurrentUserProfile
 } from '../../features/profileSlice';
+import Spinner from '../../layouts/Spinner';
 
-const CreateProfile = ({ edit = false }) => {
+const initialState = {
+  company: '',
+  website: '',
+  location: '',
+  status: '',
+  skills: '',
+  githubusername: '',
+  bio: '',
+  twitter: '',
+  facebook: '',
+  linkedin: '',
+  youtube: '',
+  instagram: ''
+};
+
+const CreateProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const creatingProfile = useMatch('/create-profile');
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
-  const { profile, loading } = useSelector((state) => state.profile);
 
-  const [formData, setFormData] = useState({
-    company: '',
-    website: '',
-    location: '',
-    status: '',
-    skills: '',
-    githubusername: '',
-    bio: '',
-    twitter: '',
-    facebook: '',
-    linkedin: '',
-    youtube: '',
-    instagram: ''
-  });
+  const { profile, loading } = useSelector((state) => state.profile);
+  const [formData, setFormData] = useState(initialState);
 
   useEffect(() => {
-    if (edit && !profile) {
+    if (!profile) {
       dispatch(getCurrentUserProfile());
-    } else if (profile) {
-      setFormData({
-        company: profile.company,
-        website: profile.website,
-        location: profile.location,
-        status: profile.status,
-        skills: profile.skills.join(','),
-        githubusername: profile.githubusername,
-        bio: profile.bio,
-        twitter: profile.social?.twitter,
-        facebook: profile.social?.facebook,
-        linkedin: profile.social?.linkedin,
-        youtube: profile.social?.youtube,
-        instagram: profile.social?.instagram
-      });
+    } else if (!loading && profile) {
+      const profileData = { ...initialState };
+      for (const key in profile) {
+        if (key in profileData) profileData[key] = profile[key];
+      }
+      for (const key in profile.social) {
+        if (key in profileData) profileData[key] = profile.social[key];
+      }
+      if (Array.isArray(profile.skills)) {
+        profileData.skills = profile.skills.join(', ');
+      }
+      setFormData(profileData);
     }
-  }, [dispatch, profile, edit]);
+  }, [dispatch, loading, profile]);
 
   const {
     company,
@@ -66,32 +67,37 @@ const CreateProfile = ({ edit = false }) => {
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    dispatch(createProfile({ formData, edit }))
-      .unwrap()
-      .then(() => {
-        if (!edit) {
-          navigate('/dashboard');
-        }
-      });
+    const editing = !!profile;
+
+    try {
+      await dispatch(
+        createOrUpdateProfile({ formData, edit: editing })
+      ).unwrap();
+      if (!editing) navigate('/dashboard');
+    } catch (err) {
+      console.error('Error creating/updating profile:', err);
+    }
   };
+
+  if (loading && !profile) return <Spinner />;
 
   return (
     <section className='container'>
       <h1 className='large text-primary'>
-        {edit ? 'Edit Profile' : 'Create Profile'}
+        {creatingProfile ? 'Create Your Profile' : 'Edit Your Profile'}
       </h1>
       <p className='lead'>
-        <i className='fas fa-user'></i>{' '}
-        {edit
-          ? 'Update your profile'
-          : "Let's get some information to make your profile stand out"}
+        <i className='fas fa-user' />
+        {creatingProfile
+          ? ` Let's get some information to make your profile stand out`
+          : ' Add some changes to your profile'}
       </p>
       <small>* = required field</small>
-      <form className='form' onSubmit={(e) => onSubmit(e)}>
+      <form className='form' onSubmit={onSubmit}>
         <div className='form-group'>
-          <select name='status' value={status} onChange={(e) => onChange(e)}>
+          <select name='status' value={status} onChange={onChange}>
             <option value='0'>* Select Professional Status</option>
             <option value='Developer'>Developer</option>
             <option value='Junior Developer'>Junior Developer</option>
@@ -112,7 +118,7 @@ const CreateProfile = ({ edit = false }) => {
             placeholder='Company'
             name='company'
             value={company}
-            onChange={(e) => onChange(e)}
+            onChange={onChange}
           />
           <small className='form-text'>
             Could be your own company or one you work for
@@ -124,7 +130,7 @@ const CreateProfile = ({ edit = false }) => {
             placeholder='Website'
             name='website'
             value={website}
-            onChange={(e) => onChange(e)}
+            onChange={onChange}
           />
           <small className='form-text'>
             Could be your own or a company website
@@ -136,7 +142,7 @@ const CreateProfile = ({ edit = false }) => {
             placeholder='Location'
             name='location'
             value={location}
-            onChange={(e) => onChange(e)}
+            onChange={onChange}
           />
           <small className='form-text'>
             City & state suggested (eg. Boston, MA)
@@ -148,10 +154,10 @@ const CreateProfile = ({ edit = false }) => {
             placeholder='* Skills'
             name='skills'
             value={skills}
-            onChange={(e) => onChange(e)}
+            onChange={onChange}
           />
           <small className='form-text'>
-            Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)
+            Please use comma-separated values (eg. HTML,CSS,JavaScript,PHP)
           </small>
         </div>
         <div className='form-group'>
@@ -160,7 +166,7 @@ const CreateProfile = ({ edit = false }) => {
             placeholder='Github Username'
             name='githubusername'
             value={githubusername}
-            onChange={(e) => onChange(e)}
+            onChange={onChange}
           />
           <small className='form-text'>
             If you want your latest repos and a Github link, include your
@@ -172,18 +178,20 @@ const CreateProfile = ({ edit = false }) => {
             placeholder='A short bio of yourself'
             name='bio'
             value={bio}
-            onChange={(e) => onChange(e)}
-          ></textarea>
+            onChange={onChange}
+          />
           <small className='form-text'>Tell us a little about yourself</small>
         </div>
 
         <div className='my-2'>
           <button
-            onClick={() => toggleSocialInputs(!displaySocialInputs)}
+            onClick={() => toggleSocialInputs((prev) => !prev)}
             type='button'
             className='btn btn-light'
           >
-            Add Social Network Links
+            {displaySocialInputs
+              ? 'Hide Social Network Links'
+              : 'Add Social Network Links'}
           </button>
           <span>Optional</span>
         </div>
@@ -191,57 +199,53 @@ const CreateProfile = ({ edit = false }) => {
         {displaySocialInputs && (
           <>
             <div className='form-group social-input'>
-              <i className='fab fa-twitter fa-2x'></i>
+              <i className='fab fa-twitter fa-2x' />
               <input
                 type='text'
                 placeholder='Twitter URL'
                 name='twitter'
                 value={twitter}
-                onChange={(e) => onChange(e)}
+                onChange={onChange}
               />
             </div>
-
             <div className='form-group social-input'>
-              <i className='fab fa-facebook fa-2x'></i>
+              <i className='fab fa-facebook fa-2x' />
               <input
                 type='text'
                 placeholder='Facebook URL'
                 name='facebook'
                 value={facebook}
-                onChange={(e) => onChange(e)}
+                onChange={onChange}
               />
             </div>
-
             <div className='form-group social-input'>
-              <i className='fab fa-youtube fa-2x'></i>
+              <i className='fab fa-youtube fa-2x' />
               <input
                 type='text'
                 placeholder='YouTube URL'
                 name='youtube'
                 value={youtube}
-                onChange={(e) => onChange(e)}
+                onChange={onChange}
               />
             </div>
-
             <div className='form-group social-input'>
-              <i className='fab fa-linkedin fa-2x'></i>
+              <i className='fab fa-linkedin fa-2x' />
               <input
                 type='text'
                 placeholder='Linkedin URL'
                 name='linkedin'
                 value={linkedin}
-                onChange={(e) => onChange(e)}
+                onChange={onChange}
               />
             </div>
-
             <div className='form-group social-input'>
-              <i className='fab fa-instagram fa-2x'></i>
+              <i className='fab fa-instagram fa-2x' />
               <input
                 type='text'
                 placeholder='Instagram URL'
                 name='instagram'
                 value={instagram}
-                onChange={(e) => onChange(e)}
+                onChange={onChange}
               />
             </div>
           </>
@@ -250,7 +254,7 @@ const CreateProfile = ({ edit = false }) => {
         <input
           type='submit'
           className='btn btn-primary my-1'
-          value={edit ? 'Save Changes' : 'Create Profile'}
+          value={creatingProfile ? 'Create Profile' : 'Save Changes'}
         />
         <Link className='btn btn-light my-1' to='/dashboard'>
           Go Back
@@ -259,7 +263,5 @@ const CreateProfile = ({ edit = false }) => {
     </section>
   );
 };
-
-CreateProfile.propTypes = {};
 
 export default CreateProfile;

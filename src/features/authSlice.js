@@ -66,54 +66,19 @@ export const loadUser = createAsyncThunk(
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
 
+      console.log('Loading user with token:', token, 'and userId:', userId);
+
       if (!token || !userId) {
         throw new Error('Token or user ID is missing');
       }
-      api.defaults.headers.common['x-auth-token'] = `Bearer ${token}`;
       const res = await api.get(`/user/${userId}`);
-      console.log('User loaded:', res.data.data);
-      return res.data.data;
+      console.log('User loaded:', res.data);
+      return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || 'Failed to load user');
     }
   }
 );
-
-const handleAuthSuccess = (state, action) => {
-  state.isAuthenticated = true;
-  state.loading = false;
-  state.token = action.payload.token;
-  state.user = action.payload.data;
-};
-
-const handleAuthFailure = (state) => {
-  state.isAuthenticated = false;
-  state.loading = false;
-  state.token = null;
-  state.user = null;
-  localStorage.removeItem('token');
-};
-
-const handleUserLoadSuccess = (state, action) => {
-  state.isAuthenticated = true;
-  state.loading = false;
-  state.user = action.payload;
-};
-
-const handleUserLoadFailure = (state) => {
-  state.isAuthenticated = false;
-  state.loading = false;
-  state.user = null;
-};
-
-const handleLogout = (state) => {
-  state.isAuthenticated = false;
-  state.loading = false;
-  state.token = null;
-  state.user = null;
-  localStorage.removeItem('token');
-  localStorage.removeItem('userId');
-};
 
 const authSlice = createSlice({
   name: 'auth',
@@ -124,17 +89,63 @@ const authSlice = createSlice({
     user: null
   },
   reducers: {
-    logout: handleLogout
+    logout: (state) => {
+      state.isAuthenticated = false;
+      state.loading = false;
+      state.token = null;
+      state.user = null;
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+    }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(register.fulfilled, handleAuthSuccess)
-      .addCase(register.rejected, handleAuthFailure)
-      .addCase(login.fulfilled, handleAuthSuccess)
-      .addCase(login.rejected, handleAuthFailure)
-      .addCase(loadUser.fulfilled, handleUserLoadSuccess)
-      .addCase(loadUser.rejected, handleUserLoadFailure)
-      .addCase(logoutUser.fulfilled, handleLogout);
+      .addCase(register.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.loading = false;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+      })
+      .addCase(register.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.token = null;
+        state.user = null;
+        localStorage.removeItem('token');
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.loading = false;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+      })
+      .addCase(login.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.token = null;
+        state.user = null;
+        localStorage.removeItem('token');
+      })
+      .addCase(loadUser.fulfilled, (state, action) => {
+        console.log('User loaded in authSlice:', action.payload);
+        state.isAuthenticated = true;
+        state.loading = false;
+        state.user = action.payload.user;
+      })
+      .addCase(loadUser.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.user = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        console.log('User load failed, logging out');
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.token = null;
+        state.user = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+      });
   }
 });
 

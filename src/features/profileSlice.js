@@ -15,10 +15,13 @@ export const getCurrentUserProfile = createAsyncThunk(
       }
       const res = await api.get(`/profile/${userId}`);
       if (!res.data || !res.data.data) {
-        return null; // Profile not found which is ok
+        return null; // Profile not found is ok as newly created user doesnt have one
       }
-
-      return res.data;
+      const profile = res.data.data;
+      if (profile && profile.skills && Array.isArray(profile.skills)) {
+        profile.skills = profile.skills.join(', ');
+      }
+      return profile;
     } catch (err) {
       console.error('Error in getCurrentUserProfile:', err); // Debug
       return rejectWithValue({
@@ -71,24 +74,45 @@ export const getGithubRepos = createAsyncThunk(
   }
 );
 
-export const createProfile = createAsyncThunk(
-  'profile/createProfile',
+export const createOrUpdateProfile = createAsyncThunk(
+  'profile/createOrUpdateProfile',
   async ({ formData, edit }, { dispatch, rejectWithValue }) => {
     try {
       const userId = localStorage.getItem('userId');
-      const res = await api.post(`/profile/${userId}`);
-      dispatch(
-        showAlert(edit ? 'Profile Updated' : 'Profile Created', 'success')
-      );
-      return res.data;
-    } catch (err) {
-      const errors = err.response.data.errors;
-      if (errors) {
-        errors.forEach((error) => dispatch(showAlert(error.msg, 'danger')));
+      if (!userId) {
+        throw new Error('User ID not found in local storage');
       }
+
+      const res = edit
+        ? await api.put(`/profile/${userId}`, formData)
+        : await api.post(`/profile/${userId}`, formData);
+
+      dispatch(
+        showAlert(
+          edit
+            ? 'Profile successfully updated'
+            : 'Profile successfully created',
+          'success'
+        )
+      );
+      return res.data.data;
+    } catch (err) {
+      if (err.response?.status === 400) {
+        const message = err.response?.data;
+        if (typeof message === 'string') {
+          dispatch(showAlert(message, 'danger'));
+        } else {
+          dispatch(
+            showAlert('Validation failed. Please check your inputs.', 'danger')
+          );
+        }
+      } else {
+        dispatch(showAlert('An error occurred. Please try again.', 'danger'));
+      }
+
       return rejectWithValue({
-        msg: err.response.statusText,
-        status: err.response.status
+        msg: err.response?.statusText || err.message,
+        status: err.response?.status || 500
       });
     }
   }
@@ -218,7 +242,7 @@ const profileSlice = createSlice({
         state.repos = action.payload;
         state.loading = false;
       })
-      .addCase(createProfile.fulfilled, (state, action) => {
+      .addCase(createOrUpdateProfile.fulfilled, (state, action) => {
         state.profile = action.payload;
         state.loading = false;
       })
@@ -246,6 +270,10 @@ const profileSlice = createSlice({
       .addCase(getCurrentUserProfile.rejected, (state, action) => {
         state.error = action.payload;
         state.profile = null;
+        state.loading = false;
+      })
+      .addCase(createOrUpdateProfile.rejected, (state, action) => {
+        state.error = action.payload;
         state.loading = false;
       })
       .addCase(getProfiles.rejected, (state, action) => {
