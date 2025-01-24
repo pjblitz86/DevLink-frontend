@@ -71,8 +71,8 @@ export const loadUser = createAsyncThunk(
       }
       api.defaults.headers.common['x-auth-token'] = `Bearer ${token}`;
       const res = await api.get(`/user/${userId}`);
-      console.log('User loaded:', res.data);
-      return res.data;
+      console.log('User loaded:', res.data.data);
+      return res.data.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || 'Failed to load user');
     }
@@ -83,7 +83,7 @@ const handleAuthSuccess = (state, action) => {
   state.isAuthenticated = true;
   state.loading = false;
   state.token = action.payload.token;
-  state.user = action.payload.user;
+  state.user = action.payload.data;
 };
 
 const handleAuthFailure = (state) => {

@@ -32,8 +32,14 @@ const router = createBrowserRouter(
         path='/dashboard'
         element={<PrivateRoute element={<Dashboard />} />}
       />
-      <Route path='/create-profile' element={<ProfileForm />} />
-      <Route path='/edit-profile' element={<ProfileForm />} />
+      <Route
+        path='/create-profile'
+        element={<PrivateRoute element={<ProfileForm />} />}
+      />
+      <Route
+        path='/edit-profile'
+        element={<PrivateRoute element={<ProfileForm />} />}
+      />
       <Route path='/add-experience' element={<AddExperience />} />
       <Route path='/add-education' element={<AddEducation />} />
     </Route>

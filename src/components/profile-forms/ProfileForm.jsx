@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  createProfile,
+  getCurrentUserProfile
+} from '../../features/profileSlice';
 
-const CreateProfile = (props) => {
+const CreateProfile = ({ edit = false }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
+  const { profile, loading } = useSelector((state) => state.profile);
+
   const [formData, setFormData] = useState({
     company: '',
     website: '',
@@ -17,6 +26,28 @@ const CreateProfile = (props) => {
     youtube: '',
     instagram: ''
   });
+
+  useEffect(() => {
+    if (edit && !profile) {
+      dispatch(getCurrentUserProfile());
+    } else if (profile) {
+      setFormData({
+        company: profile.company,
+        website: profile.website,
+        location: profile.location,
+        status: profile.status,
+        skills: profile.skills.join(','),
+        githubusername: profile.githubusername,
+        bio: profile.bio,
+        twitter: profile.social?.twitter,
+        facebook: profile.social?.facebook,
+        linkedin: profile.social?.linkedin,
+        youtube: profile.social?.youtube,
+        instagram: profile.social?.instagram
+      });
+    }
+  }, [dispatch, profile, edit]);
+
   const {
     company,
     website,
@@ -32,23 +63,30 @@ const CreateProfile = (props) => {
     instagram
   } = formData;
 
-  const navigate = useNavigate();
-
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const onSubmit = (e) => {
     e.preventDefault();
-    // TODO: submit redux action
+    dispatch(createProfile({ formData, edit }))
+      .unwrap()
+      .then(() => {
+        if (!edit) {
+          navigate('/dashboard');
+        }
+      });
   };
 
   return (
     <section className='container'>
-      <h1 className='large text-primary'>Create Your Profile</h1>
+      <h1 className='large text-primary'>
+        {edit ? 'Edit Profile' : 'Create Profile'}
+      </h1>
       <p className='lead'>
-        {/* TODO: add logic if we're creating or editing profile */}
-        <i className='fas fa-user'></i> Let's get some information to make your
-        profile stand out
+        <i className='fas fa-user'></i>{' '}
+        {edit
+          ? 'Update your profile'
+          : "Let's get some information to make your profile stand out"}
       </p>
       <small>* = required field</small>
       <form className='form' onSubmit={(e) => onSubmit(e)}>
@@ -209,7 +247,11 @@ const CreateProfile = (props) => {
           </>
         )}
 
-        <input type='submit' className='btn btn-primary my-1' />
+        <input
+          type='submit'
+          className='btn btn-primary my-1'
+          value={edit ? 'Save Changes' : 'Create Profile'}
+        />
         <Link className='btn btn-light my-1' to='/dashboard'>
           Go Back
         </Link>

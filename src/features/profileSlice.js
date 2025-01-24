@@ -20,6 +20,7 @@ export const getCurrentUserProfile = createAsyncThunk(
 
       return res.data;
     } catch (err) {
+      console.error('Error in getCurrentUserProfile:', err); // Debug
       return rejectWithValue({
         msg: err.response?.statusText || err.message,
         status: err.response?.status || 500
@@ -74,7 +75,8 @@ export const createProfile = createAsyncThunk(
   'profile/createProfile',
   async ({ formData, edit }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.post('/profile', formData);
+      const userId = localStorage.getItem('userId');
+      const res = await api.post(`/profile/${userId}`);
       dispatch(
         showAlert(edit ? 'Profile Updated' : 'Profile Created', 'success')
       );
@@ -200,6 +202,7 @@ const profileSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getCurrentUserProfile.fulfilled, (state, action) => {
+        console.log('Profile Data Fulfilled:', action.payload); // Debug
         state.profile = action.payload;
         state.loading = false;
       })

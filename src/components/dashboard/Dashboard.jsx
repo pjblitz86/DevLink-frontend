@@ -20,16 +20,15 @@ const Dashboard = () => {
   }, [dispatch]);
 
   if (profileLoading || authLoading) return <Spinner />;
-  console.log('Profile State:', profile);
   console.log('Auth State:', user);
 
   return (
     <section className='container'>
       <h1 className='large text-primary'>Dashboard</h1>
       <p className='lead'>
-        <i className='fas fa-user' /> Welcome, {user?.name || 'user'}
+        <i className='fas fa-user' /> Welcome, {user?.name || 'User'}
       </p>
-      {profile !== null ? (
+      {profile ? (
         <>
           <DashboardActions />
           <div className='my-2'>
@@ -43,7 +42,7 @@ const Dashboard = () => {
         </>
       ) : (
         <>
-          <p>You have not yet setup a profile, please add some info</p>
+          <p>You have not yet set up a profile, please add some info</p>
           <Link to='/create-profile' className='btn btn-primary my-1'>
             Create Profile
           </Link>
