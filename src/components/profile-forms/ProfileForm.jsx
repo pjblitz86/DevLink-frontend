@@ -75,7 +75,7 @@ const CreateProfile = () => {
       await dispatch(
         createOrUpdateProfile({ formData, edit: editing })
       ).unwrap();
-      if (!editing) navigate('/dashboard');
+      navigate('/dashboard');
     } catch (err) {
       console.error('Error creating/updating profile:', err);
     }

@@ -105,7 +105,7 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.loading = false;
         state.token = action.payload.token;
-        state.user = action.payload.user;
+        state.user = action.payload.data;
       })
       .addCase(register.rejected, (state) => {
         state.isAuthenticated = false;
@@ -146,7 +146,6 @@ const authSlice = createSlice({
         localStorage.removeItem('userId');
       })
       .addCase(logoutUser.fulfilled, (state) => {
-        console.log('User load failed, logging out');
         state.isAuthenticated = false;
         state.loading = false;
         state.token = null;

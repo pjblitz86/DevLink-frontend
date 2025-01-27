@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../utils/api';
 import { showAlert } from './alertSlice';
+import { logout } from './authSlice';
 
 export const getCurrentUserProfile = createAsyncThunk(
   'profile/getCurrentUserProfile',
@@ -137,23 +138,6 @@ export const addExperience = createAsyncThunk(
   }
 );
 
-export const updateExperience = createAsyncThunk(
-  'profile/updateExperience',
-  async ({ experienceId, formData }, { dispatch, rejectWithValue }) => {
-    try {
-      const res = await api.put(`/experience/${experienceId}`, formData);
-      dispatch(showAlert('Experience updated successfully', 'success'));
-      return res.data;
-    } catch (err) {
-      console.error('Error updating experience:', err);
-      dispatch(showAlert('Failed to update experience', 'danger'));
-      return rejectWithValue(
-        err.response?.data || 'Failed to update experience'
-      );
-    }
-  }
-);
-
 export const deleteExperience = createAsyncThunk(
   'profile/deleteExperience',
   async (experienceId, { dispatch, rejectWithValue }) => {
@@ -189,23 +173,6 @@ export const addEducation = createAsyncThunk(
   }
 );
 
-export const updateEducation = createAsyncThunk(
-  'profile/updateEducation',
-  async ({ educationId, formData }, { dispatch, rejectWithValue }) => {
-    try {
-      const res = await api.put(`/education/${educationId}`, formData);
-      dispatch(showAlert('Education updated successfully', 'success'));
-      return res.data;
-    } catch (err) {
-      console.error('Error updating education:', err);
-      dispatch(showAlert('Failed to update education', 'danger'));
-      return rejectWithValue(
-        err.response?.data || 'Failed to update education'
-      );
-    }
-  }
-);
-
 export const deleteEducation = createAsyncThunk(
   'profile/deleteEducation',
   async (educationId, { dispatch, rejectWithValue }) => {
@@ -223,18 +190,44 @@ export const deleteEducation = createAsyncThunk(
   }
 );
 
-export const deleteAccount = createAsyncThunk(
-  'profile/deleteAccount',
-  async (_, { dispatch, rejectWithValue }) => {
+export const deleteProfile = createAsyncThunk(
+  'profile/deleteProfile',
+  async (profileId, { dispatch, rejectWithValue }) => {
     if (window.confirm('Are you sure? This can NOT be undone!')) {
       try {
-        await api.delete('/profile');
-        dispatch(showAlert('Your account has been permanently deleted'));
-        return null; // Return null to clear profile
+        await api.delete(`/profile/${profileId}`);
+        dispatch(showAlert('Your profile has been permanently deleted'));
+        return null;
       } catch (err) {
         return rejectWithValue({
           msg: err.response.statusText,
           status: err.response.status
+        });
+      }
+    }
+  }
+);
+
+export const deleteAccount = createAsyncThunk(
+  'profile/deleteAccount',
+  async (profileId, { dispatch, rejectWithValue }) => {
+    if (window.confirm('Are you sure? This can NOT be undone!')) {
+      try {
+        const userId = localStorage.getItem('userId');
+        await api.delete(`/profile/${profileId}`);
+        await api.delete(`/user/${userId}`);
+        dispatch(logout());
+        dispatch(showAlert('Your account has been permanently deleted'));
+        return null;
+      } catch (err) {
+        const message =
+          err.response?.data?.message ||
+          err.message ||
+          'Failed to delete account';
+        console.error('Error deleting account:', message);
+        return rejectWithValue({
+          msg: message,
+          status: err.response?.status || 500
         });
       }
     }
@@ -258,8 +251,8 @@ const profileSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Fulfilled cases
       .addCase(getCurrentUserProfile.fulfilled, (state, action) => {
-        console.log('Profile Data Fulfilled:', action.payload); // Debug
         state.profile = action.payload;
         state.loading = false;
       })
@@ -280,55 +273,51 @@ const profileSlice = createSlice({
         state.loading = false;
       })
       .addCase(addExperience.fulfilled, (state, action) => {
-        state.profile.experiences.push(action.payload);
-        state.loading = false;
-      })
-      .addCase(updateExperience.fulfilled, (state, action) => {
-        const index = state.profile.experiences.findIndex(
-          (exp) => exp.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.profile.experiences[index] = action.payload;
+        if (state.profile) {
+          state.profile.experiences.push(action.payload);
         }
         state.loading = false;
       })
       .addCase(addEducation.fulfilled, (state, action) => {
-        state.profile.educations.push(action.payload);
-        state.loading = false;
-      })
-      .addCase(updateEducation.fulfilled, (state, action) => {
-        const index = state.profile.educations.findIndex(
-          (edu) => edu.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.profile.educations[index] = action.payload;
+        if (state.profile) {
+          state.profile.educations.push(action.payload);
         }
         state.loading = false;
       })
       .addCase(deleteExperience.fulfilled, (state, action) => {
-        state.profile.experiences = state.profile.experiences.filter(
-          (exp) => exp.id !== action.payload
-        );
+        if (state.profile) {
+          state.profile.experiences = state.profile.experiences.filter(
+            (exp) => exp.id !== action.payload
+          );
+        }
         state.loading = false;
       })
       .addCase(deleteEducation.fulfilled, (state, action) => {
-        state.profile.educations = state.profile.educations.filter(
-          (edu) => edu.id !== action.payload
-        );
+        if (state.profile) {
+          state.profile.educations = state.profile.educations.filter(
+            (edu) => edu.id !== action.payload
+          );
+        }
         state.loading = false;
       })
-      .addCase(deleteAccount.fulfilled, (state) => {
+      .addCase(deleteProfile.fulfilled, (state) => {
         state.profile = null;
         state.repos = [];
         state.loading = false;
       })
+      .addCase(deleteAccount.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.profile = null;
+        state.repos = [];
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+      })
+
+      // Rejected cases
       .addCase(getCurrentUserProfile.rejected, (state, action) => {
         state.error = action.payload;
         state.profile = null;
-        state.loading = false;
-      })
-      .addCase(createOrUpdateProfile.rejected, (state, action) => {
-        state.error = action.payload;
         state.loading = false;
       })
       .addCase(getProfiles.rejected, (state, action) => {
@@ -339,11 +328,23 @@ const profileSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
+      .addCase(getGithubRepos.rejected, (state) => {
+        state.repos = [];
+        state.loading = false;
+      })
+      .addCase(createOrUpdateProfile.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(addExperience.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
       .addCase(addEducation.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })
-      .addCase(updateEducation.rejected, (state, action) => {
+      .addCase(deleteExperience.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })
@@ -351,8 +352,12 @@ const profileSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
-      .addCase(getGithubRepos.rejected, (state) => {
-        state.repos = [];
+      .addCase(deleteProfile.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(deleteAccount.rejected, (state, action) => {
+        state.error = action.payload;
         state.loading = false;
       });
   }
