@@ -7,6 +7,8 @@ import {
   deleteAccount
 } from '../../features/profileSlice';
 import Spinner from '../../layouts/Spinner';
+import Experience from './Experience';
+import Education from './Education';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -19,6 +21,7 @@ const Dashboard = () => {
     dispatch(getCurrentUserProfile());
   }, [dispatch]);
 
+  console.log('Dashboard:', { profileLoading, authLoading });
   if (profileLoading || authLoading) return <Spinner />;
 
   return (
@@ -30,6 +33,8 @@ const Dashboard = () => {
       {profile ? (
         <>
           <DashboardActions />
+          <Experience experience={profile.experiences || []} />
+          <Education education={profile.educations || []} />
           <div className='my-2'>
             <button
               className='btn btn-danger'

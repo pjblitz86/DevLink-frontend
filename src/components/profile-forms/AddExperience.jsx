@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addExperience } from '../../features/profileSlice';
 
 const AddExperience = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const profile = useSelector((state) => state.profile.profile);
   const [formData, setFormData] = useState({
     company: '',
     title: '',
@@ -25,13 +26,26 @@ const AddExperience = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await dispatch(
-        addExperience({
-          profileId: localStorage.getItem('userId'),
-          formData
-        })
-      ).unwrap();
+      if (!profile || !profile.id) {
+        console.error('Profile ID is missing in the Redux store');
+        return;
+      }
+
+      const payload = {
+        profileId: profile.id,
+        formData: {
+          ...formData,
+          startDate: formData.from,
+          endDate: formData.to || null
+        }
+      };
+
+      delete payload.formData.from;
+      delete payload.formData.to;
+
+      await dispatch(addExperience(payload)).unwrap();
       navigate('/dashboard');
     } catch (err) {
       console.error('Failed to add experience:', err);

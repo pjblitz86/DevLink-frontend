@@ -122,6 +122,7 @@ export const addExperience = createAsyncThunk(
   'profile/addExperience',
   async ({ profileId, formData }, { dispatch, rejectWithValue }) => {
     try {
+      console.log('FormData being sent:', formData); // Debugging log
       const res = await api.post(
         `/profile/${profileId}/experience/add`,
         formData

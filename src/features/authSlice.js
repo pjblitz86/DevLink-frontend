@@ -71,6 +71,7 @@ export const loadUser = createAsyncThunk(
       if (!token || !userId) {
         throw new Error('Token or user ID is missing');
       }
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       const res = await api.get(`/user/${userId}`);
       console.log('User loaded:', res.data);
       return res.data;
@@ -84,7 +85,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: {
     token: localStorage.getItem('token'),
-    isAuthenticated: false,
+    isAuthenticated: !!localStorage.getItem('token'),
     loading: true,
     user: null
   },
@@ -117,7 +118,7 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.loading = false;
         state.token = action.payload.token;
-        state.user = action.payload.user;
+        state.user = action.payload.data;
       })
       .addCase(login.rejected, (state) => {
         state.isAuthenticated = false;
@@ -126,16 +127,23 @@ const authSlice = createSlice({
         state.user = null;
         localStorage.removeItem('token');
       })
+      .addCase(loadUser.pending, (state) => {
+        console.log('loadUser pending');
+        state.loading = true;
+      })
       .addCase(loadUser.fulfilled, (state, action) => {
-        console.log('User loaded in authSlice:', action.payload);
+        console.log('User loaded in authSlice:', action.payload.data);
         state.isAuthenticated = true;
         state.loading = false;
-        state.user = action.payload.user;
+        state.user = action.payload.data;
       })
       .addCase(loadUser.rejected, (state) => {
         state.isAuthenticated = false;
         state.loading = false;
         state.user = null;
+        state.token = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
       })
       .addCase(logoutUser.fulfilled, (state) => {
         console.log('User load failed, logging out');

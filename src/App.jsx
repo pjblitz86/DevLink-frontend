@@ -78,46 +78,26 @@ const App = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     console.log('Token on App load:', token);
-
     if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      console.log('Dispatching loadUser...');
-      dispatch(loadUser())
-        .unwrap()
-        .then((data) => {
-          console.log('loadUser succeeded:', data);
-        })
-        .catch((err) => {
-          console.error('loadUser failed:', err);
-        });
-    } else {
-      console.log('No token found, skipping loadUser');
+      if (!isAuthenticated) {
+        dispatch(loadUser());
+      }
     }
-  }, [dispatch]);
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('token');
-  //   console.log('Token on App load:', token);
-  //   if (token) {
-  //     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  //     if (!isAuthenticated) {
-  //       dispatch(loadUser());
-  //     }
-  //   }
+    const handleStorageChange = () => {
+      if (!localStorage.getItem('token')) {
+        dispatch(logout());
+      }
+    };
 
-  //   const handleStorageChange = () => {
-  //     if (!localStorage.getItem('token')) {
-  //       dispatch(logout());
-  //     }
-  //   };
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [dispatch, isAuthenticated]);
 
-  //   window.addEventListener('storage', handleStorageChange);
-  //   return () => {
-  //     window.removeEventListener('storage', handleStorageChange);
-  //   };
-  // }, [dispatch, isAuthenticated]);
-
-  if (loading) return <Spinner />;
+  // if (loading) return <Spinner />; TODO: endless loop on refresh
 
   return (
     <>

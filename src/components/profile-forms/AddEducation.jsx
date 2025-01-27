@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addEducation } from '../../features/profileSlice';
 
 const AddEducation = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const profile = useSelector((state) => state.profile.profile);
 
   const [formData, setFormData] = useState({
     school: '',
@@ -25,16 +26,29 @@ const AddEducation = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const profileId = localStorage.getItem('userId');
-      if (!profileId) {
-        console.error('Profile ID not found in local storage');
+      if (!profile || !profile.id) {
+        console.error('Profile ID is missing in the Redux store');
         return;
       }
-      await dispatch(addEducation({ profileId, formData })).unwrap();
+
+      const payload = {
+        profileId: profile.id,
+        formData: {
+          ...formData,
+          startDate: formData.from,
+          endDate: formData.to || null
+        }
+      };
+
+      delete payload.formData.from;
+      delete payload.formData.to;
+
+      await dispatch(addEducation(payload)).unwrap();
       navigate('/dashboard');
     } catch (err) {
-      console.error('Error adding education:', err);
+      console.error('Failed to add education:', err);
     }
   };
 
