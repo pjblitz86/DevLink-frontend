@@ -70,12 +70,15 @@ export const getGithubRepos = createAsyncThunk(
   async (username, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.get(`/github/${username}`);
-      return res.data;
+      return res.data || [];
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.msg || 'No GitHub profile found for this username';
-      dispatch(showAlert(errorMessage, 'danger'));
-      return rejectWithValue(errorMessage);
+      if (err.response?.status === 401) {
+        console.error('GitHub API: Unauthorized request');
+        return rejectWithValue(
+          'Unauthorized. Please check your token or credentials.'
+        );
+      }
+      return rejectWithValue('Failed to fetch GitHub repositories.');
     }
   }
 );
@@ -333,10 +336,10 @@ const profileSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
-      .addCase(getGithubRepos.rejected, (state) => {
+      .addCase(getGithubRepos.rejected, (state, action) => {
         state.repos = [];
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || 'Failed to fetch GitHub repos';
       })
       .addCase(createOrUpdateProfile.rejected, (state, action) => {
         state.error = action.payload;

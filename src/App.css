@@ -445,6 +445,13 @@ button {
   grid-area: github;
 }
 
+.no-credentials {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  margin-top: 10px;
+}
+
 .profile-github .repo {
   display: flex;
 }

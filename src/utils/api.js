@@ -28,9 +28,7 @@ api.interceptors.response.use(
       const { status } = error.response;
 
       if (status === 401) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
-        console.warn('Token expired or invalid. Logging out.');
+        console.warn('Token expired or invalid');
       } else if (status === 403) {
         console.warn('Access denied. You lack the required permissions.');
       }
