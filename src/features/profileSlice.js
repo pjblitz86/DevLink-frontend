@@ -37,7 +37,7 @@ export const getProfiles = createAsyncThunk(
   'profile/getProfiles',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await api.get('/profile');
+      const res = await api.get('/profiles');
       return res.data;
     } catch (err) {
       return rejectWithValue({
@@ -65,12 +65,15 @@ export const getProfileById = createAsyncThunk(
 
 export const getGithubRepos = createAsyncThunk(
   'profile/getGithubRepos',
-  async (username, { rejectWithValue }) => {
+  async (username, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.get(`/profile/github/${username}`);
+      const res = await api.get(`/github/${username}`);
       return res.data;
     } catch (err) {
-      return rejectWithValue(null); // No repos available
+      const errorMessage =
+        err.response?.data?.msg || 'No GitHub profile found for this username';
+      dispatch(showAlert(errorMessage, 'danger'));
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -331,6 +334,7 @@ const profileSlice = createSlice({
       .addCase(getGithubRepos.rejected, (state) => {
         state.repos = [];
         state.loading = false;
+        state.error = action.payload;
       })
       .addCase(createOrUpdateProfile.rejected, (state, action) => {
         state.error = action.payload;
