@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { showAlert } from './alertSlice';
 import { clearProfile } from './profileSlice';
+import api from '../utils/api';
 
 export const register = createAsyncThunk(
   'auth/register',
@@ -39,8 +40,6 @@ export const login = createAsyncThunk(
 export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
   async (_, { dispatch }) => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
     delete api.defaults.headers.common['Authorization'];
     dispatch(showAlert('Logged out successfully', 'success'));
     return null;
@@ -59,11 +58,13 @@ export const loadUser = createAsyncThunk(
       if (!token || !userId) {
         throw new Error('Token or user ID is missing');
       }
+
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const res = await api.get(`/user/${userId}`);
-      console.log('User loaded:', res.data);
+      const res = await axios.get(`/user/${userId}`);
+      console.log('User loaded successfully:', res.data);
       return res.data;
     } catch (err) {
+      console.error('Error in loadUser:', err.response || err.message);
       return rejectWithValue(err.response?.data || 'Failed to load user');
     }
   }
@@ -83,10 +84,16 @@ const authSlice = createSlice({
       state.loading = false;
       state.token = null;
       state.user = null;
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
     }
   },
   extraReducers: (builder) => {
     builder
+      .addCase(register.pending, (state) => {
+        console.log('register pending');
+        state.loading = true;
+      })
       .addCase(register.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.loading = false;
@@ -99,6 +106,10 @@ const authSlice = createSlice({
         state.token = null;
         state.user = null;
         localStorage.removeItem('token');
+      })
+      .addCase(login.pending, (state) => {
+        console.log('login pending');
+        state.loading = true;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isAuthenticated = true;
@@ -113,26 +124,32 @@ const authSlice = createSlice({
         state.user = null;
         localStorage.removeItem('token');
       })
+      .addCase(logoutUser.pending, (state) => {
+        console.log('logoutUser pending');
+        state.loading = true;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        authSlice.caseReducers.logout(state);
+        state.loading = false;
+      })
       .addCase(loadUser.pending, (state) => {
         console.log('loadUser pending');
         state.loading = true;
       })
       .addCase(loadUser.fulfilled, (state, action) => {
-        console.log('User loaded in authSlice:', action.payload.data);
+        console.log('User loaded successfully:', action.payload.data);
         state.isAuthenticated = true;
         state.loading = false;
         state.user = action.payload.data;
       })
-      .addCase(loadUser.rejected, (state) => {
+      .addCase(loadUser.rejected, (state, action) => {
+        console.error('Failed to load user:', action.payload);
         state.isAuthenticated = false;
         state.loading = false;
         state.user = null;
         state.token = null;
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
-      })
-      .addCase(logoutUser.fulfilled, (state) => {
-        authSlice.caseReducers.logout(state);
       });
   }
 });

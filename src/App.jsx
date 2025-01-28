@@ -86,16 +86,13 @@ const router = createBrowserRouter(
 
 const App = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, loading } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     console.log('Token on App load:', token);
     if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      if (!isAuthenticated) {
-        dispatch(loadUser());
-      }
+      dispatch(loadUser());
     }
 
     const handleStorageChange = () => {
@@ -108,9 +105,7 @@ const App = () => {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [dispatch, isAuthenticated]);
-
-  // if (loading) return <Spinner />; TODO: endless loop on refresh
+  }, [dispatch]);
 
   return (
     <>
