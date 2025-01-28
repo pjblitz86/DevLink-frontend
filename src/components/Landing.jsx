@@ -18,6 +18,9 @@ const Landing = () => {
             <NavLink to='/login' className='btn btn-light'>
               Login
             </NavLink>
+            <NavLink to='/profiles' className='btn btn-primary'>
+              Developers
+            </NavLink>
           </div>
         </div>
       </div>

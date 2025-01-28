@@ -16,6 +16,7 @@ import AddExperience from './components/profile-forms/AddExperience';
 import AddEducation from './components/profile-forms/AddEducation';
 import PrivateRoute from './components/auth/PrivateRoute';
 import Profiles from './components/profiles/Profiles';
+import Profile from './components/profile/Profile';
 import Alert from './layouts/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadUser, logout } from './features/authSlice';
@@ -29,6 +30,7 @@ const router = createBrowserRouter(
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path='/profiles' element={<Profiles />} />
+      <Route path='profile/:id' element={<Profile />} />
       <Route
         path='/dashboard'
         element={
