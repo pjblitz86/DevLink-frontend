@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import Spinner from '../../layouts/Spinner';
 import { getProfileById } from '../../features/profileSlice';
 import ProfileTop from './ProfileTop';
+import ProfileAbout from './ProfileAbout';
 
 const Profile = () => {
   const { id } = useParams();
@@ -31,7 +32,8 @@ const Profile = () => {
             </Link>
           )}
           <div className='profile-grid my-1'>
-            <ProfileTop profile={profile} />
+            <ProfileTop />
+            <ProfileAbout />
             <div className='profile-exp bg-white p-2'>
               <h2 className='text-primary'>Experience</h2>
             </div>
