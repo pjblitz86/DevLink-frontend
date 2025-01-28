@@ -1,32 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { showAlert } from './alertSlice';
+import { clearProfile } from './profileSlice';
 
 export const register = createAsyncThunk(
   'auth/register',
   async ({ name, email, password }, { dispatch, rejectWithValue }) => {
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
-      const body = JSON.stringify({ name, email, password });
-      const res = await axios.post('/api/register', body, config);
+      const res = await axios.post('api/register', { name, email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.data.id);
       dispatch(showAlert('Registration successful', 'success'));
       return res.data;
     } catch (err) {
-      if (err.response?.status === 400 && err.response?.data) {
-        const errors = err.response.data;
-        Object.values(errors).forEach((msg) =>
-          dispatch(showAlert(msg, 'danger'))
-        );
-        return rejectWithValue(errors);
-      }
       dispatch(showAlert('Registration failed', 'danger'));
-      return rejectWithValue('Registration failed');
+      return rejectWithValue(err.response?.data || 'Registration failed');
     }
   }
 );
@@ -35,15 +23,10 @@ export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }, { dispatch, rejectWithValue }) => {
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
-      const body = JSON.stringify({ email, password });
-      const res = await axios.post('/api/login', body, config);
+      const res = await axios.post('api/login', { email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.data.id);
+      dispatch(clearProfile());
       dispatch(showAlert('Login successful', 'success'));
       return res.data;
     } catch (err) {
@@ -53,11 +36,16 @@ export const login = createAsyncThunk(
   }
 );
 
-export const logoutUser = createAsyncThunk('auth/logoutUser', async () => {
-  localStorage.removeItem('token');
-  api.defaults.headers.common['x-auth-token'] = '';
-  return null;
-});
+export const logoutUser = createAsyncThunk(
+  'auth/logoutUser',
+  async (_, { dispatch }) => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    delete api.defaults.headers.common['Authorization'];
+    dispatch(showAlert('Logged out successfully', 'success'));
+    return null;
+  }
+);
 
 export const loadUser = createAsyncThunk(
   'auth/loadUser',
@@ -95,8 +83,6 @@ const authSlice = createSlice({
       state.loading = false;
       state.token = null;
       state.user = null;
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
     }
   },
   extraReducers: (builder) => {
@@ -146,12 +132,7 @@ const authSlice = createSlice({
         localStorage.removeItem('userId');
       })
       .addCase(logoutUser.fulfilled, (state) => {
-        state.isAuthenticated = false;
-        state.loading = false;
-        state.token = null;
-        state.user = null;
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
+        authSlice.caseReducers.logout(state);
       });
   }
 });

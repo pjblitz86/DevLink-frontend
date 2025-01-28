@@ -258,27 +258,82 @@ const profileSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
+    // getCurrentUserProfile
     builder
-      // Fulfilled cases
+      .addCase(getCurrentUserProfile.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(getCurrentUserProfile.fulfilled, (state, action) => {
         state.profile = action.payload;
         state.loading = false;
+      })
+      .addCase(getCurrentUserProfile.rejected, (state, action) => {
+        state.error = action.payload;
+        state.profile = null;
+        state.loading = false;
+      });
+
+    // getProfiles
+    builder
+      .addCase(getProfiles.pending, (state) => {
+        state.loading = true;
       })
       .addCase(getProfiles.fulfilled, (state, action) => {
         state.profiles = action.payload;
         state.loading = false;
       })
+      .addCase(getProfiles.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+
+    // getProfileById
+    builder
+      .addCase(getProfileById.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(getProfileById.fulfilled, (state, action) => {
         state.profile = action.payload;
         state.loading = false;
+      })
+      .addCase(getProfileById.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+
+    // getGithubRepos
+    builder
+      .addCase(getGithubRepos.pending, (state) => {
+        state.loading = true;
       })
       .addCase(getGithubRepos.fulfilled, (state, action) => {
         state.repos = action.payload;
         state.loading = false;
       })
+      .addCase(getGithubRepos.rejected, (state, action) => {
+        state.repos = [];
+        state.error = action.payload || 'Failed to fetch GitHub repos';
+        state.loading = false;
+      });
+
+    // createOrUpdateProfile
+    builder
+      .addCase(createOrUpdateProfile.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(createOrUpdateProfile.fulfilled, (state, action) => {
         state.profile = action.payload;
         state.loading = false;
+      })
+      .addCase(createOrUpdateProfile.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+
+    // addExperience
+    builder
+      .addCase(addExperience.pending, (state) => {
+        state.loading = true;
       })
       .addCase(addExperience.fulfilled, (state, action) => {
         if (state.profile) {
@@ -286,11 +341,31 @@ const profileSlice = createSlice({
         }
         state.loading = false;
       })
+      .addCase(addExperience.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+
+    // addEducation
+    builder
+      .addCase(addEducation.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(addEducation.fulfilled, (state, action) => {
         if (state.profile) {
           state.profile.educations.push(action.payload);
         }
         state.loading = false;
+      })
+      .addCase(addEducation.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+
+    // deleteExperience
+    builder
+      .addCase(deleteExperience.pending, (state) => {
+        state.loading = true;
       })
       .addCase(deleteExperience.fulfilled, (state, action) => {
         if (state.profile) {
@@ -300,6 +375,16 @@ const profileSlice = createSlice({
         }
         state.loading = false;
       })
+      .addCase(deleteExperience.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+
+    // deleteEducation
+    builder
+      .addCase(deleteEducation.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(deleteEducation.fulfilled, (state, action) => {
         if (state.profile) {
           state.profile.educations = state.profile.educations.filter(
@@ -308,61 +393,37 @@ const profileSlice = createSlice({
         }
         state.loading = false;
       })
+      .addCase(deleteEducation.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+
+    // deleteProfile
+    builder
+      .addCase(deleteProfile.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(deleteProfile.fulfilled, (state) => {
         state.profile = null;
         state.repos = [];
         state.loading = false;
       })
+      .addCase(deleteProfile.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+
+    // deleteAccount
+    builder
+      .addCase(deleteAccount.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(deleteAccount.fulfilled, (state) => {
         state.isAuthenticated = false;
-        state.loading = false;
         state.profile = null;
         state.repos = [];
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
-      })
-
-      // Rejected cases
-      .addCase(getCurrentUserProfile.rejected, (state, action) => {
-        state.error = action.payload;
-        state.profile = null;
-        state.loading = false;
-      })
-      .addCase(getProfiles.rejected, (state, action) => {
-        state.error = action.payload;
-        state.loading = false;
-      })
-      .addCase(getProfileById.rejected, (state, action) => {
-        state.error = action.payload;
-        state.loading = false;
-      })
-      .addCase(getGithubRepos.rejected, (state, action) => {
-        state.repos = [];
-        state.loading = false;
-        state.error = action.payload || 'Failed to fetch GitHub repos';
-      })
-      .addCase(createOrUpdateProfile.rejected, (state, action) => {
-        state.error = action.payload;
-        state.loading = false;
-      })
-      .addCase(addExperience.rejected, (state, action) => {
-        state.error = action.payload;
-        state.loading = false;
-      })
-      .addCase(addEducation.rejected, (state, action) => {
-        state.error = action.payload;
-        state.loading = false;
-      })
-      .addCase(deleteExperience.rejected, (state, action) => {
-        state.error = action.payload;
-        state.loading = false;
-      })
-      .addCase(deleteEducation.rejected, (state, action) => {
-        state.error = action.payload;
-        state.loading = false;
-      })
-      .addCase(deleteProfile.rejected, (state, action) => {
-        state.error = action.payload;
         state.loading = false;
       })
       .addCase(deleteAccount.rejected, (state, action) => {
