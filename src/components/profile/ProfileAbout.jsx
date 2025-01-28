@@ -6,8 +6,13 @@ const ProfileAbout = () => {
 
   if (!profile) return null;
 
-  const { bio, skills = [], user } = profile;
+  const { bio, skills, user } = profile;
   const firstName = user?.name ? user.name.split(' ')[0] : 'User';
+
+  // Ensure skills is always an array
+  const skillsArray = Array.isArray(skills)
+    ? skills
+    : skills?.split(',').map((skill) => skill.trim()) || [];
 
   return (
     <div className='profile-about bg-light p-2'>
@@ -20,8 +25,8 @@ const ProfileAbout = () => {
       )}
       <h2 className='text-primary'>Skill Set</h2>
       <div className='skills'>
-        {skills.length > 0 ? (
-          skills.map((skill, index) => (
+        {skillsArray.length > 0 ? (
+          skillsArray.map((skill, index) => (
             <div key={index} className='p-1'>
               <i className='fas fa-check' /> {skill}
             </div>
