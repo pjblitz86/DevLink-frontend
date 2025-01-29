@@ -24,7 +24,10 @@ export const getCurrentUserProfile = createAsyncThunk(
       }
       return profile;
     } catch (err) {
-      console.error('Error in getCurrentUserProfile:', err); // Debug
+      if (err.response?.status === 404) {
+        return null;
+      }
+
       return rejectWithValue({
         msg: err.response?.statusText || err.message,
         status: err.response?.status || 500
@@ -37,7 +40,9 @@ export const getProfiles = createAsyncThunk(
   'profile/getProfiles',
   async (_, { rejectWithValue }) => {
     try {
+      console.log('Fetching all profiles...');
       const res = await api.get('/profiles');
+      console.log('Profiles received from API:', res.data);
       return res.data;
     } catch (err) {
       return rejectWithValue({
@@ -67,7 +72,7 @@ export const getProfileById = createAsyncThunk(
 
 export const getGithubRepos = createAsyncThunk(
   'profile/getGithubRepos',
-  async (username, { dispatch, rejectWithValue }) => {
+  async (username, { getState, rejectWithValue }) => {
     try {
       const res = await api.get(`/github/${username}`);
       return res.data || [];
@@ -249,12 +254,14 @@ const profileSlice = createSlice({
     profiles: [],
     repos: [],
     loading: true,
+    profileChecked: false,
     error: {}
   },
   reducers: {
     clearProfile: (state) => {
       state.profile = null;
       state.repos = [];
+      state.profileChecked = false;
     }
   },
   extraReducers: (builder) => {
@@ -266,11 +273,13 @@ const profileSlice = createSlice({
       .addCase(getCurrentUserProfile.fulfilled, (state, action) => {
         state.profile = action.payload;
         state.loading = false;
+        state.profileChecked = true;
       })
       .addCase(getCurrentUserProfile.rejected, (state, action) => {
         state.error = action.payload;
         state.profile = null;
         state.loading = false;
+        state.profileChecked = true;
       });
 
     // getProfiles
@@ -281,10 +290,12 @@ const profileSlice = createSlice({
       .addCase(getProfiles.fulfilled, (state, action) => {
         state.profiles = action.payload;
         state.loading = false;
+        state.profileChecked = true;
       })
       .addCase(getProfiles.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
+        state.profileChecked = true;
       });
 
     // getProfileById

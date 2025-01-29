@@ -48,7 +48,7 @@ export const logoutUser = createAsyncThunk(
 
 export const loadUser = createAsyncThunk(
   'auth/loadUser',
-  async (_, { rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
@@ -57,6 +57,11 @@ export const loadUser = createAsyncThunk(
 
       if (!token || !userId) {
         throw new Error('Token or user ID is missing');
+      }
+
+      const { auth } = getState();
+      if (auth.user) {
+        return auth.user;
       }
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;

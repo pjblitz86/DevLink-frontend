@@ -1,17 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getGithubRepos } from '../../features/profileSlice';
 import Spinner from '../../layouts/Spinner';
 
 const ProfileGithub = ({ username }) => {
   const dispatch = useDispatch();
-  const { repos, loading } = useSelector((state) => state.profile);
-
-  useEffect(() => {
-    if (username) {
-      dispatch(getGithubRepos(username));
-    }
-  }, [dispatch, username]);
+  const { repos, loading, profile } = useSelector((state) => state.profile);
 
   return (
     <div className='profile-github'>

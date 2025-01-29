@@ -14,6 +14,8 @@ const Profiles = () => {
 
   console.log(profiles); // Debugging
 
+  if (loading) return <Spinner />;
+
   return (
     <section className='container'>
       {loading ? (

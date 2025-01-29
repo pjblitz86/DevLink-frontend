@@ -28,26 +28,25 @@ const CreateProfile = () => {
   const creatingProfile = useMatch('/create-profile');
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
 
-  const { profile, loading } = useSelector((state) => state.profile);
+  const { profile, loading, profileChecked } = useSelector(
+    (state) => state.profile
+  );
   const [formData, setFormData] = useState(initialState);
 
   useEffect(() => {
-    if (!profile) {
+    if (!profileChecked) {
       dispatch(getCurrentUserProfile());
-    } else if (!loading && profile) {
+    } else if (profile) {
       const profileData = { ...initialState };
       for (const key in profile) {
         if (key in profileData) profileData[key] = profile[key];
-      }
-      for (const key in profile.social) {
-        if (key in profileData) profileData[key] = profile.social[key];
       }
       if (Array.isArray(profile.skills)) {
         profileData.skills = profile.skills.join(', ');
       }
       setFormData(profileData);
     }
-  }, [dispatch, loading, profile]);
+  }, [dispatch, profileChecked, profile]);
 
   const {
     company,
@@ -81,7 +80,7 @@ const CreateProfile = () => {
     }
   };
 
-  if (loading && !profile) return <Spinner />;
+  if (!profileChecked) return <Spinner />;
 
   return (
     <section className='container'>
