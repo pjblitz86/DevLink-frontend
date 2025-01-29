@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getPosts } from '../../features/postSlice';
 import Spinner from '../../layouts/Spinner';
 import PostItem from './PostItem';
+import PostForm from './PostForm';
 
 const Posts = () => {
   const dispatch = useDispatch();
@@ -20,11 +21,13 @@ const Posts = () => {
       <p className='lead'>
         <i className='fas fa-user' /> Welcome to the DevLink community
       </p>
-      {/* PostForm */}
+      <PostForm />
       <div className='posts'>
-        {posts.map((post) => (
-          <PostItem key={post.id} post={post} />
-        ))}
+        {Array.isArray(posts) && posts.length > 0 ? (
+          posts.map((post) => <PostItem key={post.id} post={post} />)
+        ) : (
+          <h4>No posts found...</h4>
+        )}
       </div>
     </section>
   );

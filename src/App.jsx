@@ -18,6 +18,7 @@ import PrivateRoute from './components/auth/PrivateRoute';
 import Profiles from './components/profiles/Profiles';
 import Profile from './components/profile/Profile';
 import Posts from './components/posts/Posts';
+import Post from './components/post/Post';
 import Alert from './layouts/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadUser, logout } from './features/authSlice';
@@ -77,6 +78,14 @@ const router = createBrowserRouter(
         element={
           <PrivateRoute>
             <Posts />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path='/post/:id'
+        element={
+          <PrivateRoute>
+            <Post />
           </PrivateRoute>
         }
       />
