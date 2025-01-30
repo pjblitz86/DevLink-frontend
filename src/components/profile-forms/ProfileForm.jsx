@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useMatch, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import normalizeUrl from 'normalize-url';
 import {
   createOrUpdateProfile,
   getCurrentUserProfile
@@ -66,13 +67,32 @@ const CreateProfile = () => {
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  const normalizeSocialUrl = (url) => {
+    if (!url) return '';
+    try {
+      return normalizeUrl(url, { forceHttps: true, stripWWW: false });
+    } catch (error) {
+      return url;
+    }
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     const editing = !!profile;
 
+    const sanitizedFormData = {
+      ...formData,
+      website: normalizeSocialUrl(website),
+      twitter: normalizeSocialUrl(twitter),
+      facebook: normalizeSocialUrl(facebook),
+      linkedin: normalizeSocialUrl(linkedin),
+      youtube: normalizeSocialUrl(youtube),
+      instagram: normalizeSocialUrl(instagram)
+    };
+
     try {
       await dispatch(
-        createOrUpdateProfile({ formData, edit: editing })
+        createOrUpdateProfile({ formData: sanitizedFormData, edit: editing })
       ).unwrap();
       navigate('/dashboard');
     } catch (err) {
