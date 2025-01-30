@@ -11,6 +11,7 @@ export const register = createAsyncThunk(
       const res = await axios.post('api/register', { name, email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.data.id);
+      dispatch(clearProfile());
       dispatch(showAlert('Registration successful', 'success'));
       return res.data;
     } catch (err) {

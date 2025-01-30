@@ -15,7 +15,7 @@ const ProfileExperience = () => {
     <div className='profile-exp bg-white p-2'>
       <h2 className='text-primary'>Experience</h2>
       {experiences.length === 0 ? (
-        <p className='no-credentials'>No experience credentials</p>
+        <p className='no-credentials'>No experience added</p>
       ) : (
         experiences.map(
           ({

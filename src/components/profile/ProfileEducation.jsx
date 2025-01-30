@@ -15,7 +15,7 @@ const ProfileEducation = () => {
     <div className='profile-edu bg-white p-2'>
       <h2 className='text-primary'>Education</h2>
       {educations.length === 0 ? (
-        <p className='no-credentials'>No education credentials</p>
+        <p className='no-credentials'>No education added</p>
       ) : (
         educations.map(
           ({

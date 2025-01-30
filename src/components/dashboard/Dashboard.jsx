@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DashboardActions from './DashboardActions';
 import {
+  clearProfile,
   getCurrentUserProfile,
   deleteProfile,
   deleteAccount
@@ -24,6 +25,12 @@ const Dashboard = () => {
     isAuthenticated,
     loading: authLoading
   } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (profile && profile.user && user && profile.user.id !== user.id) {
+      dispatch(clearProfile());
+    }
+  }, [dispatch, user, profile]);
 
   useEffect(() => {
     if (!profileChecked) {
