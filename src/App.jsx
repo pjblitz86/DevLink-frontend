@@ -23,7 +23,6 @@ import Alert from './layouts/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadUser, logout } from './features/authSlice';
 import api from './utils/api';
-import Spinner from './layouts/Spinner';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -95,12 +94,13 @@ const router = createBrowserRouter(
 
 const App = () => {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log('Token on App load:', token);
-    if (token) {
+    if (token && !user) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      console.log('Dispatching loadUser...');
       dispatch(loadUser());
     }
 
@@ -114,7 +114,7 @@ const App = () => {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   return (
     <>

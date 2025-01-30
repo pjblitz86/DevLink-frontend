@@ -57,17 +57,19 @@ export const loadUser = createAsyncThunk(
       console.log('Loading user with token:', token, 'and userId:', userId);
 
       if (!token || !userId) {
+        console.error('No token or userId found in localStorage');
         throw new Error('Token or user ID is missing');
       }
 
       const { auth } = getState();
       if (auth.user) {
+        console.log('User already exists in state:', auth.user);
         return auth.user;
       }
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const res = await axios.get(`/user/${userId}`);
-      console.log('User loaded successfully:', res.data);
+      const res = await api.get(`/user/${userId}`);
+      console.log('API Response:', res);
       return res.data;
     } catch (err) {
       console.error('Error in loadUser:', err.response || err.message);
@@ -143,10 +145,10 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(loadUser.fulfilled, (state, action) => {
-        console.log('User loaded successfully:', action.payload.data);
+        console.log('User loaded successfully:', action.payload);
         state.isAuthenticated = true;
         state.loading = false;
-        state.user = action.payload.data;
+        state.user = action.payload;
       })
       .addCase(loadUser.rejected, (state, action) => {
         console.error('Failed to load user:', action.payload);

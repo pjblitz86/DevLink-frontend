@@ -19,7 +19,11 @@ const Dashboard = () => {
     loading: profileLoading,
     profileChecked
   } = useSelector((state) => state.profile);
-  const { user, loading: authLoading } = useSelector((state) => state.auth);
+  const {
+    user,
+    isAuthenticated,
+    loading: authLoading
+  } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (!profileChecked) {
@@ -27,7 +31,6 @@ const Dashboard = () => {
     }
   }, [dispatch, profileChecked]);
 
-  console.log('Dashboard:', { profileLoading, authLoading });
   if (profileLoading || authLoading) return <Spinner />;
 
   const handleDeleteProfile = async () => {
@@ -56,7 +59,8 @@ const Dashboard = () => {
     <section className='container'>
       <h1 className='large text-primary'>Dashboard</h1>
       <p className='lead'>
-        <i className='fas fa-user' /> Welcome, {user?.name || 'User'}
+        <i className='fas fa-user' /> Welcome,{' '}
+        {isAuthenticated && user ? user.name : 'User'}
       </p>
       {profile ? (
         <>

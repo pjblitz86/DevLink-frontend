@@ -224,12 +224,22 @@ export const deleteProfile = createAsyncThunk(
 
 export const deleteAccount = createAsyncThunk(
   'profile/deleteAccount',
-  async (userId, { dispatch, rejectWithValue }) => {
+  async (userId, { dispatch, getState, rejectWithValue }) => {
     if (window.confirm('Are you sure? This can NOT be undone!')) {
       try {
+        const { profile } = getState().profile;
+        const profileId = profile?.id;
+        if (profileId) {
+          console.log(`Deleting profile with ID: ${profileId}`);
+          await api.delete(`/profile/${profileId}`);
+        } else {
+          console.warn('No profile found, skipping profile deletion.');
+        }
+        console.log(`Deleting user with ID: ${userId}`);
         await api.delete(`/user/${userId}`);
         dispatch(logout());
         dispatch(showAlert('Your account has been permanently deleted'));
+
         return null;
       } catch (err) {
         const message =
