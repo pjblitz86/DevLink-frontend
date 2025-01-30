@@ -29,13 +29,11 @@ const CreateProfile = () => {
   const creatingProfile = useMatch('/create-profile');
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
 
-  const { profile, loading, profileChecked } = useSelector(
-    (state) => state.profile
-  );
+  const { profile, loading } = useSelector((state) => state.profile);
   const [formData, setFormData] = useState(initialState);
 
   useEffect(() => {
-    if (!profileChecked) {
+    if (!profile) {
       dispatch(getCurrentUserProfile());
     } else if (profile) {
       const profileData = { ...initialState };
@@ -47,7 +45,7 @@ const CreateProfile = () => {
       }
       setFormData(profileData);
     }
-  }, [dispatch, profileChecked, profile]);
+  }, [dispatch, profile]);
 
   const {
     company,
@@ -99,8 +97,6 @@ const CreateProfile = () => {
       console.error('Error creating/updating profile:', err);
     }
   };
-
-  if (!profileChecked) return <Spinner />;
 
   return (
     <section className='container'>

@@ -263,14 +263,12 @@ const profileSlice = createSlice({
     profiles: [],
     repos: [],
     loading: true,
-    profileChecked: false,
     error: {}
   },
   reducers: {
     clearProfile: (state) => {
       state.profile = null;
       state.repos = [];
-      state.profileChecked = false;
     }
   },
   extraReducers: (builder) => {
@@ -282,13 +280,11 @@ const profileSlice = createSlice({
       .addCase(getCurrentUserProfile.fulfilled, (state, action) => {
         state.profile = action.payload;
         state.loading = false;
-        state.profileChecked = true;
       })
       .addCase(getCurrentUserProfile.rejected, (state, action) => {
         state.error = action.payload;
         state.profile = null;
         state.loading = false;
-        state.profileChecked = true;
       });
 
     // getProfiles
@@ -299,12 +295,10 @@ const profileSlice = createSlice({
       .addCase(getProfiles.fulfilled, (state, action) => {
         state.profiles = action.payload;
         state.loading = false;
-        state.profileChecked = true;
       })
       .addCase(getProfiles.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
-        state.profileChecked = true;
       });
 
     // getProfileById

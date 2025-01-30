@@ -15,11 +15,9 @@ import Education from './Education';
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {
-    profile,
-    loading: profileLoading,
-    profileChecked
-  } = useSelector((state) => state.profile);
+  const { profile, loading: profileLoading } = useSelector(
+    (state) => state.profile
+  );
   const {
     user,
     isAuthenticated,
@@ -33,10 +31,8 @@ const Dashboard = () => {
   }, [dispatch, user, profile]);
 
   useEffect(() => {
-    if (!profileChecked) {
-      dispatch(getCurrentUserProfile());
-    }
-  }, [dispatch, profileChecked]);
+    dispatch(getCurrentUserProfile());
+  }, [dispatch]);
 
   if (profileLoading || authLoading) return <Spinner />;
 
