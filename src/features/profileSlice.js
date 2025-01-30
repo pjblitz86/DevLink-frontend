@@ -314,9 +314,9 @@ const profileSlice = createSlice({
 
     // getGithubRepos
     builder
-      .addCase(getGithubRepos.pending, (state) => {
-        state.loading = true;
-      })
+      // .addCase(getGithubRepos.pending, (state) => {
+      //   state.loading = true;
+      // }) TODO
       .addCase(getGithubRepos.fulfilled, (state, action) => {
         state.repos = action.payload;
         state.loading = false;

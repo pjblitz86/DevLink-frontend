@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Spinner from '../../layouts/Spinner';
 import PostItem from '../posts/PostItem';
-
+import CommentForm from './CommentForm';
+import CommentItem from './CommentItem';
 import { getPostById } from '../../features/postSlice';
 
 const Post = () => {
@@ -24,7 +25,12 @@ const Post = () => {
         Back To Posts
       </Link>
       <PostItem post={post} showActions={false} />
-      <div className='comments'>Comments</div>
+      <CommentForm postId={post.id} />
+      <div className='comments'>
+        {post.comments.map((comment) => (
+          <CommentItem key={comment.id} comment={comment} postId={post.id} />
+        ))}
+      </div>
     </section>
   );
 };

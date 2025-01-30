@@ -22,6 +22,7 @@ export const getPostById = createAsyncThunk(
   async (postId, { rejectWithValue }) => {
     try {
       const res = await api.get(`/post/${postId}`);
+      console.log('Fetched post:', res.data); // ✅ Debugging
       return res.data;
     } catch (err) {
       return rejectWithValue({
@@ -124,6 +125,34 @@ export const unlikePost = createAsyncThunk(
   }
 );
 
+export const addComment = createAsyncThunk(
+  'post/addComment',
+  async ({ postId, text }, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await api.post(`/post/${postId}/comment`, { text });
+      dispatch(showAlert('Comment added successfully', 'success'));
+      return { postId, comment: res.data };
+    } catch (err) {
+      dispatch(showAlert('Failed to add comment', 'danger'));
+      return rejectWithValue(err.response?.data || 'Failed to add comment');
+    }
+  }
+);
+
+export const deleteComment = createAsyncThunk(
+  'post/deleteComment',
+  async ({ postId, commentId }, { dispatch, rejectWithValue }) => {
+    try {
+      await api.delete(`/post/comment/${commentId}`);
+      dispatch(showAlert('Comment deleted successfully', 'success'));
+      return { postId, commentId };
+    } catch (err) {
+      dispatch(showAlert('Failed to delete comment', 'danger'));
+      return rejectWithValue(err.response?.data || 'Failed to delete comment');
+    }
+  }
+);
+
 const postSlice = createSlice({
   name: 'post',
   initialState: {
@@ -216,11 +245,32 @@ const postSlice = createSlice({
         const { postId, likes } = action.payload;
         const post = state.posts.find((p) => p.id === postId);
         if (post) post.likes = likes;
+        state.loading = false;
       })
       .addCase(unlikePost.fulfilled, (state, action) => {
         const { postId, likes } = action.payload;
         const post = state.posts.find((p) => p.id === postId);
         if (post) post.likes = likes;
+        state.loading = false;
+      })
+      // comments
+      .addCase(addComment.fulfilled, (state, action) => {
+        const { postId, comment } = action.payload;
+        if (state.post && state.post.id === postId) {
+          state.post.comments = [...(state.post.comments || []), comment];
+        }
+
+        state.loading = false;
+      })
+      .addCase(deleteComment.fulfilled, (state, action) => {
+        const { postId, commentId } = action.payload;
+        const post = state.posts.find((p) => p.id === postId);
+        if (post) {
+          post.comments = post.comments.filter(
+            (comment) => comment.id !== commentId
+          );
+        }
+        state.loading = false;
       });
   }
 });
