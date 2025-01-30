@@ -127,9 +127,13 @@ export const unlikePost = createAsyncThunk(
 
 export const addComment = createAsyncThunk(
   'post/addComment',
-  async ({ postId, text }, { dispatch, rejectWithValue }) => {
+  async ({ postId, text, name, avatar }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.post(`/post/${postId}/comment`, { text });
+      const res = await api.post(`/post/${postId}/comment`, {
+        text,
+        name,
+        avatar
+      });
       dispatch(showAlert('Comment added successfully', 'success'));
       return { postId, comment: res.data };
     } catch (err) {

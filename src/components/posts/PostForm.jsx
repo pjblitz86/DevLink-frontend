@@ -14,7 +14,16 @@ const PostForm = () => {
       alert('You must be logged in to post.');
       return;
     }
-    dispatch(createPost({ userId: user.id, formData: { text } }));
+    dispatch(
+      createPost({
+        userId: user.id,
+        formData: {
+          text,
+          name: user.name,
+          avatar: user.avatar
+        }
+      })
+    );
     setText('');
   };
 

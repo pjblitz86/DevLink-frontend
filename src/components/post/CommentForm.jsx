@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addComment } from '../../features/postSlice';
 
 const CommentForm = ({ postId }) => {
   const dispatch = useDispatch();
   const [text, setText] = useState('');
+  const { user } = useSelector((state) => state.auth);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!text.trim()) return;
-    dispatch(addComment({ postId, text }));
+    dispatch(
+      addComment({
+        postId,
+        text,
+        name: user.name,
+        avatar: user.avatar
+      })
+    );
     setText('');
   };
 

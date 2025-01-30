@@ -7,8 +7,11 @@ import { deleteComment } from '../../features/postSlice';
 const CommentItem = ({ postId, comment }) => {
   const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.auth);
-
   const { id, text, name, avatar, post, date } = comment;
+  const { profiles } = useSelector((state) => state.profile);
+
+  const profile = profiles?.find((p) => p.user?.name === name);
+  const profileId = profile?.id;
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this comment?')) {
@@ -19,7 +22,7 @@ const CommentItem = ({ postId, comment }) => {
   return (
     <div className='post bg-white p-1 my-1'>
       <div>
-        <Link to={`/profile/${user}`}>
+        <Link to={profileId ? `/profile/${profileId}` : '#'}>
           <img className='round-img' src={avatar} alt='' />
           <h4>{name}</h4>
         </Link>

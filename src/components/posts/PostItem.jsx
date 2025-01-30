@@ -3,22 +3,20 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import formatDate from '../../utils/formatDate';
 import { deletePost, likePost, unlikePost } from '../../features/postSlice';
-import PropTypes from 'prop-types';
 
 const PostItem = ({ post, showActions = true }) => {
   const dispatch = useDispatch();
   const { user: authUser, loading } = useSelector((state) => state.auth);
+  const { profiles } = useSelector((state) => state.profile);
 
-  const {
-    id,
-    text,
-    name,
-    avatar,
-    user,
-    likes = [],
-    comments = [],
-    date
-  } = post;
+  const { id, text, name, avatar, likes = [], comments = [], date } = post;
+
+  const profile = profiles?.find((p) => p.user?.name === name);
+  const profileId = profile?.id;
+  const profileUserId = profile?.user?.id;
+
+  console.log('Profiles loaded: ', profiles);
+  console.log('Profile user id: ', profileUserId);
 
   const handleLike = () => {
     if (authUser) {
@@ -41,8 +39,8 @@ const PostItem = ({ post, showActions = true }) => {
   return (
     <div className='post bg-white p-1 my-1'>
       <div>
-        <Link to={`/profile/${user}`}>
-          <img className='round-img' src={avatar} alt='' />
+        <Link to={profileId ? `/profile/${profileId}` : '#'}>
+          <img className='round-img' src={avatar} alt='Avatar' />
           <h4>{name}</h4>
         </Link>
       </div>
@@ -72,7 +70,7 @@ const PostItem = ({ post, showActions = true }) => {
                 <span className='comment-count'>{comments.length}</span>
               )}
             </Link>
-            {!loading && authUser?.id === user && (
+            {!loading && authUser?.id === profileUserId && (
               <button
                 onClick={handleDelete}
                 type='button'
