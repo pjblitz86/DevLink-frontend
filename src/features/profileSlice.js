@@ -209,6 +209,7 @@ export const deleteProfile = createAsyncThunk(
     if (window.confirm('Are you sure? This can NOT be undone!')) {
       try {
         await api.delete(`/profile/${profileId}`);
+        dispatch(clearProfile());
         dispatch(showAlert('Your profile has been permanently deleted'));
         return null;
       } catch (err) {
@@ -223,11 +224,9 @@ export const deleteProfile = createAsyncThunk(
 
 export const deleteAccount = createAsyncThunk(
   'profile/deleteAccount',
-  async (profileId, { dispatch, rejectWithValue }) => {
+  async (userId, { dispatch, rejectWithValue }) => {
     if (window.confirm('Are you sure? This can NOT be undone!')) {
       try {
-        const userId = localStorage.getItem('userId');
-        await api.delete(`/profile/${profileId}`);
         await api.delete(`/user/${userId}`);
         dispatch(logout());
         dispatch(showAlert('Your account has been permanently deleted'));
@@ -347,9 +346,13 @@ const profileSlice = createSlice({
         state.loading = true;
       })
       .addCase(addExperience.fulfilled, (state, action) => {
-        if (state.profile) {
-          state.profile.experiences.push(action.payload);
+        if (!state.profile) {
+          state.profile = {};
         }
+        if (!state.profile.experiences) {
+          state.profile.experiences = [];
+        }
+        state.profile.experiences.push(action.payload);
         state.loading = false;
       })
       .addCase(addExperience.rejected, (state, action) => {

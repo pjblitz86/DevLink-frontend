@@ -42,7 +42,12 @@ const Dashboard = () => {
         'Are you sure you want to delete your account? This action is irreversible.'
       )
     ) {
-      await dispatch(deleteAccount(profile.id)).unwrap();
+      const userId = user?.id;
+      if (!userId) {
+        console.error('User ID is missing. Cannot delete account.');
+        return;
+      }
+      await dispatch(deleteAccount(userId)).unwrap();
       navigate('/');
     }
   };
@@ -63,21 +68,28 @@ const Dashboard = () => {
           </section>
           <div className='my-2'>
             <button className='btn btn-danger' onClick={handleDeleteProfile}>
-              <i className='fas fa-user' /> Delete My Profile
+              <i className='fas fa-user' /> Delete Profile
             </button>
           </div>
           <div className='my-2'>
             <button className='btn btn-danger' onClick={handleDeleteAccount}>
-              <i className='fas fa-user-minus' /> Delete My Account
+              <i className='fas fa-user-minus' /> Delete Account
             </button>
           </div>
         </>
       ) : (
         <>
-          <p>You have not yet set up a profile, please add some info</p>
-          <Link to='/create-profile' className='btn btn-primary my-1'>
-            Create Profile
-          </Link>
+          <div className='buttons'>
+            <Link to='/create-profile' className='btn btn-primary my-1'>
+              Create Profile
+            </Link>
+            <button
+              className='btn btn-danger my-1'
+              onClick={handleDeleteAccount}
+            >
+              <i className='fas fa-user-minus' /> Delete Account
+            </button>
+          </div>
         </>
       )}
     </section>

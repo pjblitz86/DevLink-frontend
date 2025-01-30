@@ -41,6 +41,7 @@ export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
   async (_, { dispatch }) => {
     delete api.defaults.headers.common['Authorization'];
+    dispatch(clearProfile());
     dispatch(showAlert('Logged out successfully', 'success'));
     return null;
   }
