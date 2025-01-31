@@ -19,13 +19,13 @@ const PostItem = ({ post, showActions = true }) => {
   console.log('Profile user id: ', profileUserId);
 
   const handleLike = () => {
-    if (authUser) {
+    if (authUser && id) {
       dispatch(likePost({ userId: authUser.id, postId: id }));
     }
   };
 
   const handleUnlike = () => {
-    if (authUser) {
+    if (authUser && id) {
       dispatch(unlikePost({ userId: authUser.id, postId: id }));
     }
   };

@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { showAlert } from './alertSlice';
 import { clearProfile } from './profileSlice';
 import api from '../utils/api';
@@ -8,7 +7,7 @@ export const register = createAsyncThunk(
   'auth/register',
   async ({ name, email, password }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post('api/register', { name, email, password });
+      const res = await api.post('/register', { name, email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.data.id);
       dispatch(clearProfile());
@@ -25,7 +24,7 @@ export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post('api/login', { email, password });
+      const res = await api.post('/login', { email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.data.id);
       dispatch(clearProfile());

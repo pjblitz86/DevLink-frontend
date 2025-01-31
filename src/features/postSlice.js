@@ -104,7 +104,7 @@ export const likePost = createAsyncThunk(
   async ({ userId, postId }, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.post(`/post/${postId}/like/${userId}`);
-      return { postId, likes: res.data.likes }; // Update only the likes array
+      return { postId, likes: res.data.likes };
     } catch (err) {
       dispatch(showAlert('Failed to like post', 'danger'));
       return rejectWithValue(err.response?.data || 'Failed to like post');
@@ -117,7 +117,7 @@ export const unlikePost = createAsyncThunk(
   async ({ userId, postId }, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.delete(`/post/${postId}/unlike/${userId}`);
-      return { postId, likes: res.data.likes }; // Update only the likes array
+      return { postId, likes: res.data.likes };
     } catch (err) {
       dispatch(showAlert('Failed to unlike post', 'danger'));
       return rejectWithValue(err.response?.data || 'Failed to unlike post');
