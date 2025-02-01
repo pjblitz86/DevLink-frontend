@@ -206,7 +206,13 @@ const postSlice = createSlice({
         state.error = null;
       })
       .addCase(createPost.fulfilled, (state, action) => {
-        state.posts.unshift(action.payload);
+        const newPost = {
+          ...action.payload,
+          user: {
+            id: action.meta.arg.userId
+          }
+        };
+        state.posts.unshift(newPost);
         state.loading = false;
       })
       .addCase(createPost.rejected, (state, action) => {

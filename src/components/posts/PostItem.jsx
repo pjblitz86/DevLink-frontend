@@ -1,22 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 import formatDate from '../../utils/formatDate';
 import { deletePost, likePost, unlikePost } from '../../features/postSlice';
 
 const PostItem = ({ post, showActions = true }) => {
   const dispatch = useDispatch();
   const { user: authUser, loading } = useSelector((state) => state.auth);
-  const { profiles } = useSelector((state) => state.profile);
+  const [profileId, setProfileId] = useState(null);
 
-  const { id, text, name, avatar, likes = [], comments = [], date } = post;
+  const {
+    id,
+    text,
+    user,
+    name,
+    avatar,
+    likes = [],
+    comments = [],
+    date
+  } = post;
 
-  const profile = profiles?.find((p) => p.user?.name === name);
-  const profileId = profile?.id;
-  const profileUserId = profile?.user?.id;
+  useEffect(() => {
+    const fetchProfileId = async () => {
+      try {
+        const res = await axios.get(`/profile/${user.id}`);
+        if (res.data.data) {
+          setProfileId(res.data.data.id);
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
 
-  console.log('Profiles loaded: ', profiles);
-  console.log('Profile user id: ', profileUserId);
+    if (user?.id) {
+      fetchProfileId();
+    }
+    console.log('fetchProfileId: ', fetchProfileId);
+  }, [user.id]);
 
   const handleLike = () => {
     if (authUser && id) {
@@ -70,7 +91,7 @@ const PostItem = ({ post, showActions = true }) => {
                 <span className='comment-count'>{comments.length}</span>
               )}
             </Link>
-            {!loading && authUser?.id === profileUserId && (
+            {!loading && authUser?.id === user.id && (
               <button
                 onClick={handleDelete}
                 type='button'
