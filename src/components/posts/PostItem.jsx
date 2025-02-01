@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import api from '../../utils/api';
 import formatDate from '../../utils/formatDate';
 import { deletePost, likePost, unlikePost } from '../../features/postSlice';
 
@@ -24,20 +25,21 @@ const PostItem = ({ post, showActions = true }) => {
   useEffect(() => {
     const fetchProfileId = async () => {
       try {
-        const res = await axios.get(`/profile/${user.id}`);
+        console.log('Fetching profile for user:', user?.id);
+        const res = await api.get(`/profile/${user.id}`);
         if (res.data.data) {
+          console.log('Profile ID fetched:', res.data.data.id);
           setProfileId(res.data.data.id);
         }
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error('Error fetching profile:', error.response?.data || error);
       }
     };
 
     if (user?.id) {
       fetchProfileId();
     }
-    console.log('fetchProfileId: ', fetchProfileId);
-  }, [user.id]);
+  }, [user]);
 
   const handleLike = () => {
     if (authUser && id) {
