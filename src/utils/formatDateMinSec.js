@@ -1,4 +1,4 @@
-function formatDate(date) {
+function formatDateMinSec(date) {
   if (!date) {
     return 'Invalid date';
   }
@@ -13,8 +13,12 @@ function formatDate(date) {
 
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true // Ensures AM/PM format
     }).format(parsedDate);
   } catch (error) {
     console.error('Error formatting date:', error, 'Input date:', date);
@@ -22,4 +26,4 @@ function formatDate(date) {
   }
 }
 
-export default formatDate;
+export default formatDateMinSec;

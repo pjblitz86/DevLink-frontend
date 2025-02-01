@@ -1,13 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../utils/api';
 import { showAlert } from './alertSlice';
+import formatDateMinSec from '../utils/formatDateMinSec';
 
 export const getPosts = createAsyncThunk(
   'post/getPosts',
   async (_, { rejectWithValue }) => {
     try {
       const res = await api.get('/posts');
-      return res.data;
+      return res.data.sort((a, b) => new Date(b.date) - new Date(a.date));
     } catch (err) {
       return rejectWithValue({
         msg: err.response?.statusText || 'Failed to fetch posts',
@@ -104,9 +105,15 @@ export const likePost = createAsyncThunk(
   async ({ userId, postId }, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.post(`/post/${postId}/like/${userId}`);
-      return { postId, likes: res.data.likes };
+      console.log('API Like Response:', res.data);
+      dispatch(showAlert('Post liked!', 'success'));
+      return { postId, likes: res.data.likes || [] };
     } catch (err) {
-      dispatch(showAlert('Failed to like post', 'danger'));
+      if (err.response?.status === 409) {
+        dispatch(showAlert('You have already liked this post!', 'danger'));
+      } else {
+        dispatch(showAlert('Failed to like post!', 'danger'));
+      }
       return rejectWithValue(err.response?.data || 'Failed to like post');
     }
   }
@@ -117,9 +124,15 @@ export const unlikePost = createAsyncThunk(
   async ({ userId, postId }, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.delete(`/post/${postId}/unlike/${userId}`);
-      return { postId, likes: res.data.likes };
+      dispatch(showAlert('Post unliked!', 'success'));
+      return { postId, likes: res.data.likes || [] };
     } catch (err) {
-      dispatch(showAlert('Failed to unlike post', 'danger'));
+      if (err.response?.status === 409) {
+        dispatch(showAlert('You have not liked this post!', 'danger'));
+      } else {
+        dispatch(showAlert('Failed to unlike post', 'danger'));
+      }
+
       return rejectWithValue(err.response?.data || 'Failed to unlike post');
     }
   }
@@ -253,14 +266,29 @@ const postSlice = createSlice({
       // likes
       .addCase(likePost.fulfilled, (state, action) => {
         const { postId, likes } = action.payload;
-        const post = state.posts.find((p) => p.id === postId);
-        if (post) post.likes = likes;
+        const postIndex = state.posts.findIndex((p) => p.id === postId);
+        if (postIndex !== -1) {
+          state.posts[postIndex] = {
+            ...state.posts[postIndex],
+            likes: Array.isArray(likes) ? [...likes] : []
+          };
+          state.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+          console.log('Updated post likes:', state.posts[postIndex].likes);
+        }
         state.loading = false;
       })
       .addCase(unlikePost.fulfilled, (state, action) => {
         const { postId, likes } = action.payload;
-        const post = state.posts.find((p) => p.id === postId);
-        if (post) post.likes = likes;
+        const postIndex = state.posts.findIndex((p) => p.id === postId);
+
+        if (postIndex !== -1) {
+          state.posts[postIndex] = {
+            ...state.posts[postIndex],
+            likes: Array.isArray(likes) ? [...likes] : []
+          };
+          console.log('🟢 Updated post likes:', state.posts[postIndex].likes);
+        }
+        state.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
         state.loading = false;
       })
       // comments

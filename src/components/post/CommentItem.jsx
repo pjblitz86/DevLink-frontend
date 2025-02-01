@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import formatDate from '../../utils/formatDate';
+import formatDateMinSec from '../../utils/formatDateMinSec';
 import { deleteComment } from '../../features/postSlice';
 
 const CommentItem = ({ postId, comment }) => {
@@ -29,7 +29,7 @@ const CommentItem = ({ postId, comment }) => {
       </div>
       <div>
         <p className='my-1'>{text}</p>
-        <p className='post-date'>Posted on {formatDate(date)}</p>
+        <p className='post-date'>Posted on {formatDateMinSec(date)}</p>
         {!loading && user?.id === post?.user?.id && (
           <button
             onClick={handleDelete}

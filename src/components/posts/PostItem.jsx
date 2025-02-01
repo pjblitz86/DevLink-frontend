@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import api from '../../utils/api';
-import formatDate from '../../utils/formatDate';
+import formatDateMinSec from '../../utils/formatDateMinSec';
 import { deletePost, likePost, unlikePost } from '../../features/postSlice';
 
 const PostItem = ({ post, showActions = true }) => {
@@ -43,13 +43,19 @@ const PostItem = ({ post, showActions = true }) => {
 
   const handleLike = () => {
     if (authUser && id) {
+      console.log('Liking post:', id, 'by user:', authUser.id);
       dispatch(likePost({ userId: authUser.id, postId: id }));
+    } else {
+      console.error('Like failed: Missing user or post ID');
     }
   };
 
   const handleUnlike = () => {
     if (authUser && id) {
+      console.log('Unliking post:', id, 'by user:', authUser.id);
       dispatch(unlikePost({ userId: authUser.id, postId: id }));
+    } else {
+      console.error('Unlike failed: Missing user or post ID');
     }
   };
 
@@ -69,7 +75,7 @@ const PostItem = ({ post, showActions = true }) => {
       </div>
       <div>
         <p className='my-1'>{text}</p>
-        <p className='post-date'>Posted on {formatDate(date)}</p>
+        <p className='post-date'>Posted on {formatDateMinSec(date)}</p>
         {showActions && (
           <>
             <button
