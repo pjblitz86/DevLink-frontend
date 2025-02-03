@@ -80,9 +80,9 @@ export const updatePost = createAsyncThunk(
 
 export const deletePost = createAsyncThunk(
   'post/deletePost',
-  async (postId, { dispatch, rejectWithValue }) => {
+  async ({ postId, userId }, { dispatch, rejectWithValue }) => {
     try {
-      await api.delete(`/post/${postId}`);
+      await api.delete(`/post/${postId}?userId=${userId}`);
       dispatch(showAlert('Post deleted successfully', 'success'));
       return postId;
     } catch (err) {
@@ -260,6 +260,7 @@ const postSlice = createSlice({
         state.loading = false;
       })
       .addCase(deletePost.rejected, (state, action) => {
+        console.error('Failed to delete post:', action.payload);
         state.error = action.payload;
         state.loading = false;
       })

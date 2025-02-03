@@ -61,7 +61,7 @@ const PostItem = ({ post, showActions = true }) => {
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this post?')) {
-      dispatch(deletePost(id));
+      dispatch(deletePost({ postId: id, userId: authUser.id }));
     }
   };
 

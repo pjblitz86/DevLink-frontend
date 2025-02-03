@@ -1,11 +1,12 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../features/authSlice';
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const handleLogout = () => {
@@ -13,16 +14,22 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const isActive = (path) => (location.pathname === path ? 'active' : '');
+
   const authLinks = (
     <ul>
       <li>
-        <Link to='/profiles'>Developers</Link>
+        <Link to='/profiles' className={isActive('/profiles')}>
+          Developers
+        </Link>
       </li>
       <li>
-        <Link to='/posts'>Posts</Link>
+        <Link to='/posts' className={isActive('/posts')}>
+          Posts
+        </Link>
       </li>
       <li>
-        <Link to='/dashboard'>
+        <Link to='/dashboard' className={isActive('/dashboard')}>
           <i className='fas fa-user' />{' '}
           <span className='hide-sm'>Dashboard</span>
         </Link>
@@ -39,13 +46,19 @@ const Navbar = () => {
   const guestLinks = (
     <ul>
       <li>
-        <Link to='/profiles'>Developers</Link>
+        <Link to='/profiles' className={isActive('/profiles')}>
+          Developers
+        </Link>
       </li>
       <li>
-        <Link to='/register'>Register</Link>
+        <Link to='/register' className={isActive('/register')}>
+          Register
+        </Link>
       </li>
       <li>
-        <Link to='/login'>Login</Link>
+        <Link to='/login' className={isActive('/login')}>
+          Login
+        </Link>
       </li>
     </ul>
   );

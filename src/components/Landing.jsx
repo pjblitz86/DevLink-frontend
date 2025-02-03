@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import Hero from './Hero';
 
 const Landing = () => {
   return (
@@ -22,6 +23,7 @@ const Landing = () => {
               Developers
             </NavLink>
           </div>
+          <Hero />
         </div>
       </div>
     </section>
