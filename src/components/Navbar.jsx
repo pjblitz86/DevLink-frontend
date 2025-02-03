@@ -24,6 +24,11 @@ const Navbar = () => {
         </Link>
       </li>
       <li>
+        <Link to='/jobs' className={isActive('/jobs')}>
+          Jobs
+        </Link>
+      </li>
+      <li>
         <Link to='/posts' className={isActive('/posts')}>
           Posts
         </Link>
@@ -48,6 +53,11 @@ const Navbar = () => {
       <li>
         <Link to='/profiles' className={isActive('/profiles')}>
           Developers
+        </Link>
+      </li>
+      <li>
+        <Link to='/jobs' className={isActive('/jobs')}>
+          Jobs
         </Link>
       </li>
       <li>

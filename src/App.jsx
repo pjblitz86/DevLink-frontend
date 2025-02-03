@@ -23,6 +23,7 @@ import Alert from './layouts/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadUser, logout } from './features/authSlice';
 import api from './utils/api';
+import Jobs from './components/jobs/Jobs';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,6 +32,7 @@ const router = createBrowserRouter(
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path='/profiles' element={<Profiles />} />
+      <Route path='/jobs' element={<Jobs />} />
       <Route path='profile/:id' element={<Profile />} />
       <Route
         path='/dashboard'
