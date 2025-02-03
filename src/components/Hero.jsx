@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
 
 const Hero = ({
-  title = 'Become a React Dev',
-  subtitle = 'Find a React job that fits your skill set'
+  title = 'Get a Job',
+  subtitle = 'Find a developer job that fits your skill set'
 }) => {
   return (
     <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center mt-16'>

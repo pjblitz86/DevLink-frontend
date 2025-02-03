@@ -9,8 +9,8 @@ const Landing = () => {
         <div className='landing-inner'>
           <h1 className='x-large'>Developer Link</h1>
           <p className='lead'>
-            Create a developer profile/portfolio, share posts and get help from
-            other developers
+            Create a developer profile, share posts and get help from other
+            developers
           </p>
           <div className='buttons'>
             <NavLink to='/register' className='btn btn-primary'>

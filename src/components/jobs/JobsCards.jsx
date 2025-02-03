@@ -13,7 +13,7 @@ const JobsCards = () => {
             </p>
             <Link
               to='/jobs'
-              className='inline-block bg-black text-white text-lg font-medium rounded-lg px-6 py-2 w-auto min-w-[150px] text-center hover:bg-gray-700 transition duration-200'
+              className='inline-block bg-black text-white text-lg font-medium rounded-lg px-6 py-1 w-auto min-w-[150px] text-center hover:bg-gray-700 transition duration-200'
             >
               Browse Jobs
             </Link>
@@ -25,7 +25,7 @@ const JobsCards = () => {
             </p>
             <Link
               to='/add-job'
-              className='inline-block bg-indigo-500 text-white text-lg font-medium rounded-lg px-6 py-2 w-auto min-w-[150px] text-center hover:bg-indigo-600 transition duration-200'
+              className='inline-block bg-indigo-500 text-white text-lg font-medium rounded-lg px-6 py-1 w-auto min-w-[150px] text-center hover:bg-indigo-600 transition duration-200'
             >
               Add Job
             </Link>

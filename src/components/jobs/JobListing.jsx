@@ -13,7 +13,6 @@ const JobListing = ({ job }) => {
 
   return (
     <div className='bg-white rounded-xl shadow-md flex flex-col h-full p-4'>
-      {/* Job Content */}
       <div className='flex-grow'>
         <div className='mb-6'>
           <div className='text-gray-600 my-2'>{job.type}</div>
@@ -32,8 +31,6 @@ const JobListing = ({ job }) => {
         <h3 className='text-indigo-500 mb-2'>{job.salary} / Year</h3>
 
         <div className='border border-gray-100 mb-5'></div>
-
-        {/* Location Row */}
         <div className='flex items-center text-orange-700 mb-3'>
           <FaMapMarker className='inline text-lg mr-1' />
           {job.location}
@@ -42,7 +39,7 @@ const JobListing = ({ job }) => {
       <div className='mt-auto flex justify-end w-full'>
         <Link
           to={`/jobs/${job.id}`}
-          className='bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-center text-sm w-full flex items-center justify-center'
+          className='bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-1 rounded-lg text-center text-sm w-full flex items-center justify-center'
         >
           Read More
         </Link>
