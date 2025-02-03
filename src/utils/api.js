@@ -9,7 +9,13 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const publicRoutes = ['/register', '/login'];
+    const publicRoutes = [
+      '/register',
+      '/login',
+      '/profiles',
+      '/profile',
+      '/api/jobs'
+    ];
     const isPublicRoute = publicRoutes.some((route) =>
       config.url.includes(route)
     );
