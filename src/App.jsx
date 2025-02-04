@@ -24,6 +24,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadUser, logout } from './features/authSlice';
 import api from './utils/api';
 import JobsPage from './pages/JobsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
       <Route path='/register' element={<Register />} />
       <Route path='/profiles' element={<Profiles />} />
       <Route path='/jobs' element={<JobsPage />} />
+      <Route path='*' element={<NotFoundPage />} />
       <Route path='profile/:id' element={<Profile />} />
       <Route
         path='/dashboard'
