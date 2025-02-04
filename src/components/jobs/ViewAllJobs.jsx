@@ -1,15 +1,16 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
-const ViewAllJobs = () => {
+const ViewAllJobs = ({ loadAll, setLoadAll }) => {
   return (
-    <section className='m-auto max-w-lg my-10 px-6'>
-      <Link
-        to='/jobs'
-        className='block bg-black text-white text-center py-4 px-6 rounded-xl hover:bg-gray-700'
+    <section className='flex justify-center my-5'>
+      <button
+        onClick={() => setLoadAll((prev) => !prev)}
+        className='bg-black text-white text-center py-4 px-24 rounded-xl hover:bg-gray-700 transition duration-300 w-auto'
       >
-        View All Jobs
-      </Link>
+        {loadAll ? 'Show Recent Jobs' : 'View All Jobs'}
+      </button>
     </section>
   );
 };
+
 export default ViewAllJobs;

@@ -69,7 +69,7 @@ export const loadUser = createAsyncThunk(
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       const res = await api.get(`/user/${userId}`);
-      console.log('API Response:', res);
+      console.log('Load User Response:', res.data);
       return res.data;
     } catch (err) {
       console.error('Error in loadUser:', err.response || err.message);

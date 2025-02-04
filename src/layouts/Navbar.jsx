@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../features/authSlice';
 
@@ -19,25 +19,25 @@ const Navbar = () => {
   const authLinks = (
     <ul>
       <li>
-        <Link to='/profiles' className={isActive('/profiles')}>
+        <NavLink to='/profiles' className={isActive('/profiles')}>
           Developers
-        </Link>
+        </NavLink>
       </li>
       <li>
-        <Link to='/jobs' className={isActive('/jobs')}>
+        <NavLink to='/jobs' className={isActive('/jobs')}>
           Jobs
-        </Link>
+        </NavLink>
       </li>
       <li>
-        <Link to='/posts' className={isActive('/posts')}>
+        <NavLink to='/posts' className={isActive('/posts')}>
           Posts
-        </Link>
+        </NavLink>
       </li>
       <li>
-        <Link to='/dashboard' className={isActive('/dashboard')}>
+        <NavLink to='/dashboard' className={isActive('/dashboard')}>
           <i className='fas fa-user' />{' '}
           <span className='hide-sm'>Dashboard</span>
-        </Link>
+        </NavLink>
       </li>
       <li>
         <a onClick={handleLogout} href='#!'>
@@ -51,24 +51,24 @@ const Navbar = () => {
   const guestLinks = (
     <ul>
       <li>
-        <Link to='/profiles' className={isActive('/profiles')}>
+        <NavLink to='/profiles' className={isActive('/profiles')}>
           Developers
-        </Link>
+        </NavLink>
       </li>
       <li>
-        <Link to='/jobs' className={isActive('/jobs')}>
+        <NavLink to='/jobs' className={isActive('/jobs')}>
           Jobs
-        </Link>
+        </NavLink>
       </li>
       <li>
-        <Link to='/register' className={isActive('/register')}>
+        <NavLink to='/register' className={isActive('/register')}>
           Register
-        </Link>
+        </NavLink>
       </li>
       <li>
-        <Link to='/login' className={isActive('/login')}>
+        <NavLink to='/login' className={isActive('/login')}>
           Login
-        </Link>
+        </NavLink>
       </li>
     </ul>
   );
