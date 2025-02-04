@@ -26,6 +26,7 @@ import api from './utils/api';
 import JobsPage from './pages/JobsPage';
 import Job from './components/jobs/Job';
 import NotFoundPage from './pages/NotFoundPage';
+import AddJob from './components/jobs/AddJob';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,6 +37,7 @@ const router = createBrowserRouter(
       <Route path='/profiles' element={<Profiles />} />
       <Route path='/jobs' element={<JobsPage />} />
       <Route path='/jobs/:id' element={<Job />} />
+      <Route path='/add-job' element={<AddJob />} />
       <Route path='*' element={<NotFoundPage />} />
       <Route path='profile/:id' element={<Profile />} />
       <Route

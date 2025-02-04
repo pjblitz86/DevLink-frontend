@@ -51,16 +51,15 @@ const Job = ({ deleteJob }) => {
 
   return (
     <>
-      <section className='container my-4'>
-        <Link
-          to='/jobs'
-          className='text-indigo-500 hover:text-indigo-600 flex items-center'
-        >
-          <FaArrowLeft className='mr-2' /> Back To Jobs
-        </Link>
-      </section>
-
       <section className='container bg-indigo-50 m-auto'>
+        <section className='container my-2'>
+          <Link
+            to='/jobs'
+            className='text-indigo-500 hover:text-indigo-600 flex items-center'
+          >
+            <FaArrowLeft className='mr-2' /> Back To Jobs
+          </Link>
+        </section>
         <div className='py-4 px-2 m-4'>
           <div className='grid grid-cols-1 md:grid-cols-70/30 w-full gap-6'>
             <main>
