@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Landing from '../components/Landing';
+import Landing from '../components/home/Landing';
 
 const LandingPage = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
