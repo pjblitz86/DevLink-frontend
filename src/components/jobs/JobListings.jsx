@@ -1,34 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Spinner from '../../layouts/Spinner';
 import JobListing from './JobListing';
 import ViewAllJobs from './ViewAllJobs';
-import api from '../../utils/api';
+import { fetchJobs } from '../../features/jobSlice';
 
 const JobListings = () => {
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { jobs, loading, error } = useSelector((state) => state.jobs);
   const [loadAll, setLoadAll] = useState(false);
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const res = await api.get(`/api/jobs${loadAll ? '' : '?limit=3'}`);
-        console.log('Jobs fetched:', res.data);
-        setJobs(res.data);
-      } catch (err) {
-        console.error('Error fetching jobs:', err);
-        setError('Failed to load jobs. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchJobs();
-  }, [loadAll]);
+    dispatch(fetchJobs(loadAll ? null : 3));
+  }, [dispatch, loadAll]);
 
   return (
     <section className='bg-blue-50 px-4 py-4'>
@@ -44,9 +28,11 @@ const JobListings = () => {
         ) : (
           <>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-              {jobs.map((job) => (
-                <JobListing key={job.id} job={job} />
-              ))}
+              {jobs.length > 0 ? (
+                jobs.map((job) => <JobListing key={job.id} job={job} />)
+              ) : (
+                <p className='text-center text-gray-500'>No jobs found.</p>
+              )}
             </div>
             <ViewAllJobs loadAll={loadAll} setLoadAll={setLoadAll} />
           </>

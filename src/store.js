@@ -11,7 +11,7 @@ const store = configureStore({
     auth: authSlice,
     profile: profileSlice,
     post: postSlice,
-    job: jobSlice
+    jobs: jobSlice
   },
   devTools: process.env.NODE_ENV !== 'production' // Enable DevTools only in development mode
 });

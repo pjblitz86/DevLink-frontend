@@ -5,6 +5,22 @@ import {
 } from '@reduxjs/toolkit';
 import api from '../utils/api';
 
+export const fetchJobs = createAsyncThunk(
+  'jobs/fetchJobs',
+  async (limit, { rejectWithValue }) => {
+    try {
+      const response = await api.get(
+        `/api/jobs${limit ? `?limit=${limit}` : ''}`
+      );
+      console.log('Fetched jobs:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('API Fetch Error:', error.response?.data || error.message);
+      return rejectWithValue(error.response?.data || 'Failed to fetch jobs');
+    }
+  }
+);
+
 export const addJob = createAsyncThunk(
   'jobs/addJob',
   async (jobData, { rejectWithValue }) => {
@@ -87,6 +103,18 @@ const jobSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchJobs.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchJobs.fulfilled, (state, action) => {
+        state.loading = false;
+        state.jobs = Array.isArray(action.payload) ? action.payload : [];
+      })
+      .addCase(fetchJobs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addCase(addJob.pending, (state) => {
         state.loading = true;
       })
