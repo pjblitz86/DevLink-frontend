@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './App.css';
 import {
   Route,
@@ -102,14 +102,19 @@ const router = createBrowserRouter(
 
 const App = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const hasLoadedUser = useRef(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token && !user) {
+
+    if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      console.log('Dispatching loadUser...');
-      dispatch(loadUser());
+
+      if (!user && !hasLoadedUser.current) {
+        dispatch(loadUser());
+        hasLoadedUser.current = true;
+      }
     }
 
     const handleStorageChange = () => {

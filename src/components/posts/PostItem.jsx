@@ -26,7 +26,7 @@ const PostItem = ({ post, showActions = true }) => {
     const fetchProfileId = async () => {
       try {
         console.log('Fetching profile for user:', user?.id);
-        const res = await api.get(`/profile/${user.id}`);
+        const res = await api.get(`/profiles/user/${user.id}`);
         if (res.data.data) {
           console.log('Profile ID fetched:', res.data.data.id);
           setProfileId(res.data.data.id);
@@ -67,10 +67,12 @@ const PostItem = ({ post, showActions = true }) => {
 
   return (
     <div className='post bg-white p-1 my-1'>
-      <div>
+      <div className='flex flex-col items-center'>
         <Link to={profileId ? `/profile/${profileId}` : '#'}>
           <img className='round-img' src={avatar} alt='Avatar' />
-          <h4>{name}</h4>
+          <h4 className='mt-2 text-center text-blue-600 hover:underline'>
+            {name}
+          </h4>
         </Link>
       </div>
       <div>

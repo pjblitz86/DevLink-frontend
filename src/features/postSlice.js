@@ -21,7 +21,7 @@ export const getPostById = createAsyncThunk(
   'post/getPostById',
   async (postId, { rejectWithValue }) => {
     try {
-      const res = await api.get(`/post/${postId}`);
+      const res = await api.get(`/posts/${postId}`);
       console.log('Fetched post:', res.data);
       return res.data;
     } catch (err) {
@@ -37,7 +37,7 @@ export const createPost = createAsyncThunk(
   'post/createPost',
   async ({ userId, formData }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.post(`/post/user/${userId}`, formData);
+      const res = await api.post(`/posts/user/${userId}`, formData);
       dispatch(showAlert('Post created successfully', 'success'));
       return res.data;
     } catch (err) {
@@ -59,7 +59,7 @@ export const updatePost = createAsyncThunk(
   'post/updatePost',
   async ({ postId, formData }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.put(`/post/${postId}`, formData);
+      const res = await api.put(`/posts/${postId}`, formData);
       dispatch(showAlert('Post updated successfully', 'success'));
       return res.data;
     } catch (err) {
@@ -81,7 +81,7 @@ export const deletePost = createAsyncThunk(
   'post/deletePost',
   async ({ postId, userId }, { dispatch, rejectWithValue }) => {
     try {
-      await api.delete(`/post/${postId}?userId=${userId}`);
+      await api.delete(`/posts/${postId}?userId=${userId}`);
       dispatch(showAlert('Post deleted successfully', 'success'));
       return postId;
     } catch (err) {
@@ -103,7 +103,7 @@ export const likePost = createAsyncThunk(
   'post/likePost',
   async ({ userId, postId }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.post(`/post/${postId}/like/${userId}`);
+      const res = await api.post(`/posts/${postId}/like/${userId}`);
       console.log('API Like Response:', res.data);
       dispatch(showAlert('Post liked!', 'success'));
       return { postId, likes: res.data.likes || [] };
@@ -122,7 +122,7 @@ export const unlikePost = createAsyncThunk(
   'post/unlikePost',
   async ({ userId, postId }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.delete(`/post/${postId}/unlike/${userId}`);
+      const res = await api.delete(`/posts/${postId}/unlike/${userId}`);
       dispatch(showAlert('Post unliked!', 'success'));
       return { postId, likes: res.data.likes || [] };
     } catch (err) {
@@ -141,7 +141,7 @@ export const addComment = createAsyncThunk(
   'post/addComment',
   async ({ postId, text, name, avatar }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.post(`/post/${postId}/comment`, {
+      const res = await api.post(`/posts/${postId}/comment`, {
         text,
         name,
         avatar
@@ -159,7 +159,7 @@ export const deleteComment = createAsyncThunk(
   'post/deleteComment',
   async ({ postId, commentId }, { dispatch, rejectWithValue }) => {
     try {
-      await api.delete(`/post/comment/${commentId}`);
+      await api.delete(`/posts/comment/${commentId}`);
       dispatch(showAlert('Comment deleted successfully', 'success'));
       return { postId, commentId };
     } catch (err) {

@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { FaArrowLeft, FaMapMarker } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Spinner from '../../layouts/Spinner';
@@ -12,10 +13,12 @@ const Job = ({ deleteJob }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await api.get(`/api/jobs/${id}`);
+        const res = await api.get(`/jobs/${id}`);
         setJob(res.data);
       } catch (err) {
         console.error('Error fetching job:', err);
@@ -48,6 +51,8 @@ const Job = ({ deleteJob }) => {
 
     navigate('/jobs');
   };
+
+  const isJobOwner = isAuthenticated && user?.id === job?.user?.id;
 
   return (
     <>
@@ -111,22 +116,23 @@ const Job = ({ deleteJob }) => {
                   {job.company.contactPhone}
                 </p>
               </div>
-
-              <div className='bg-white p-6 rounded-lg shadow-md mt-6'>
-                <h3 className='text-xl font-bold mb-6'>Manage Job</h3>
-                <Link
-                  to={`/edit-job/${job.id}`}
-                  className='bg-indigo-500 hover:bg-indigo-600 text-white text-center font-bold py-1 px-3 rounded-full w-full focus:outline-none focus:shadow-outline block text-sm h-10 flex items-center justify-center'
-                >
-                  Edit Job
-                </Link>
-                <button
-                  onClick={() => onDeleteClick(job.id)}
-                  className='bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-full w-full focus:outline-none focus:shadow-outline mt-3 block text-sm h-10 flex items-center justify-center'
-                >
-                  Delete Job
-                </button>
-              </div>
+              {isJobOwner && (
+                <div className='bg-white p-6 rounded-lg shadow-md mt-6'>
+                  <h3 className='text-xl font-bold mb-6'>Manage Job</h3>
+                  <Link
+                    to={`/edit-job/${job.id}`}
+                    className='bg-indigo-500 hover:bg-indigo-600 text-white text-center font-bold py-1 px-3 rounded-full w-full focus:outline-none focus:shadow-outline block text-sm h-10 flex items-center justify-center'
+                  >
+                    Edit Job
+                  </Link>
+                  <button
+                    onClick={() => onDeleteClick(job.id)}
+                    className='bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-full w-full focus:outline-none focus:shadow-outline mt-3 block text-sm h-10 flex items-center justify-center'
+                  >
+                    Delete Job
+                  </button>
+                </div>
+              )}
             </aside>
           </div>
         </div>

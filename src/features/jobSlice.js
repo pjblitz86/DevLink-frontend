@@ -6,9 +6,7 @@ export const fetchJobs = createAsyncThunk(
   'jobs/fetchJobs',
   async (limit, { rejectWithValue }) => {
     try {
-      const response = await api.get(
-        `/api/jobs${limit ? `?limit=${limit}` : ''}`
-      );
+      const response = await api.get(`/jobs${limit ? `?limit=${limit}` : ''}`);
       console.log('Fetched jobs:', response.data);
       return response.data;
     } catch (error) {
@@ -22,7 +20,8 @@ export const addJob = createAsyncThunk(
   'jobs/addJob',
   async (jobData, { rejectWithValue, dispatch }) => {
     try {
-      const res = await api.post('/api/jobs', jobData);
+      console.log('Sending add job post:', jobData);
+      const res = await api.post('/jobs', jobData);
       dispatch(showAlert('Job created successfully', 'success'));
       return res.data;
     } catch (error) {
@@ -37,17 +36,7 @@ export const editJob = createAsyncThunk(
   'jobs/editJob',
   async ({ jobId, jobData }, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return rejectWithValue('Unauthorized: No Token Found');
-
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-      const res = await api.put(`/api/jobs/${jobId}`, jobData, config);
+      const res = await api.put(`/jobs/${jobId}`, jobData);
       return res.data;
     } catch (error) {
       return rejectWithValue(
@@ -61,16 +50,7 @@ export const deleteJob = createAsyncThunk(
   'jobs/deleteJob',
   async (jobId, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return rejectWithValue('Unauthorized: No Token Found');
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-      await api.delete(`/api/jobs/${jobId}`, config);
+      await api.delete(`/jobs/${jobId}`, config);
       return jobId;
     } catch (error) {
       return rejectWithValue(

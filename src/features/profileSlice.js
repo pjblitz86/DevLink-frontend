@@ -14,7 +14,7 @@ export const getCurrentUserProfile = createAsyncThunk(
           status: 400
         });
       }
-      const res = await api.get(`/profile/${userId}`);
+      const res = await api.get(`/profiles/user/${userId}`);
       if (!res.data || !res.data.data) {
         return null; // Profile not found is ok as newly created user doesnt have one
       }
@@ -57,7 +57,7 @@ export const getProfileById = createAsyncThunk(
   'profile/getProfileById',
   async (profileId, { rejectWithValue }) => {
     try {
-      const res = await api.get(`/profile/id/${profileId}`);
+      const res = await api.get(`/profiles/${profileId}`);
       const profile = res.data.data;
       console.log('Profile data:', profile);
       return profile;
@@ -98,8 +98,8 @@ export const createOrUpdateProfile = createAsyncThunk(
       }
 
       const res = edit
-        ? await api.put(`/profile/${userId}`, formData)
-        : await api.post(`/profile/${userId}`, formData);
+        ? await api.put(`/profiles/user/${userId}`, formData)
+        : await api.post(`/profiles/user/${userId}`, formData);
 
       dispatch(
         showAlert(
@@ -138,7 +138,7 @@ export const addExperience = createAsyncThunk(
     try {
       console.log('FormData being sent:', formData); // Debugging log
       const res = await api.post(
-        `/profile/${profileId}/experience/add`,
+        `/profiles/${profileId}/experience/add`,
         formData
       );
       dispatch(showAlert('Experience added successfully', 'success'));
@@ -173,7 +173,7 @@ export const addEducation = createAsyncThunk(
   async ({ profileId, formData }, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.post(
-        `/profile/${profileId}/education/add`,
+        `/profiles/${profileId}/education/add`,
         formData
       );
       dispatch(showAlert('Education added successfully', 'success'));
@@ -208,7 +208,7 @@ export const deleteProfile = createAsyncThunk(
   async (profileId, { dispatch, rejectWithValue }) => {
     if (window.confirm('Are you sure? This can NOT be undone!')) {
       try {
-        await api.delete(`/profile/${profileId}`);
+        await api.delete(`/profiles/${profileId}`);
         dispatch(clearProfile());
         dispatch(showAlert('Your profile has been permanently deleted'));
         return null;
@@ -231,7 +231,7 @@ export const deleteAccount = createAsyncThunk(
         const profileId = profile?.id;
         if (profileId) {
           console.log(`Deleting profile with ID: ${profileId}`);
-          await api.delete(`/profile/${profileId}`);
+          await api.delete(`/profiles/${profileId}`);
         } else {
           console.warn('No profile found, skipping profile deletion.');
         }
