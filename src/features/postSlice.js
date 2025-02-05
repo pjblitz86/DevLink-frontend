@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../utils/api';
 import { showAlert } from './alertSlice';
-import formatDateMinSec from '../utils/formatDateMinSec';
 
 export const getPosts = createAsyncThunk(
   'post/getPosts',
@@ -23,7 +22,7 @@ export const getPostById = createAsyncThunk(
   async (postId, { rejectWithValue }) => {
     try {
       const res = await api.get(`/post/${postId}`);
-      console.log('Fetched post:', res.data); // ✅ Debugging
+      console.log('Fetched post:', res.data);
       return res.data;
     } catch (err) {
       return rejectWithValue({

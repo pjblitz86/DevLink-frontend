@@ -14,7 +14,7 @@ api.interceptors.request.use(
       '/login',
       '/profiles',
       '/profile',
-      '/api/jobs'
+      { method: 'get', route: '/api/jobs' }
     ];
     const isPublicRoute = publicRoutes.some((route) =>
       config.url.includes(route)

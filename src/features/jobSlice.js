@@ -1,9 +1,6 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  createSelector
-} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../utils/api';
+import { showAlert } from './alertSlice';
 
 export const fetchJobs = createAsyncThunk(
   'jobs/fetchJobs',
@@ -23,19 +20,10 @@ export const fetchJobs = createAsyncThunk(
 
 export const addJob = createAsyncThunk(
   'jobs/addJob',
-  async (jobData, { rejectWithValue }) => {
+  async (jobData, { rejectWithValue, dispatch }) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return rejectWithValue('Unauthorized: No Token Found');
-
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-      const res = await api.post('/api/jobs', jobData, config);
+      const res = await api.post('/api/jobs', jobData);
+      dispatch(showAlert('Job created successfully', 'success'));
       return res.data;
     } catch (error) {
       return rejectWithValue(

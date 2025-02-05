@@ -2,13 +2,10 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addJob } from '../../features/jobSlice';
-import Spinner from '../../layouts/Spinner';
 
 const AddJob = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state) => state.jobs);
-
   const [title, setTitle] = useState('');
   const [type, setType] = useState('Full-Time');
   const [location, setLocation] = useState('');
@@ -19,7 +16,7 @@ const AddJob = () => {
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
 
     const newJob = {
@@ -36,8 +33,13 @@ const AddJob = () => {
       }
     };
 
-    dispatch(addJob(newJob));
-    return navigate('/jobs');
+    try {
+      await dispatch(addJob(newJob)).unwrap();
+      console.log('Job added successfully!');
+      navigate('/jobs');
+    } catch (error) {
+      console.error('Error adding job:', error);
+    }
   };
 
   return (
