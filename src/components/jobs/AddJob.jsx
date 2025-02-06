@@ -108,8 +108,8 @@ const AddJob = () => {
                 rows='4'
                 placeholder='Add any job duties, expectations, requirements, etc'
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
                 style={{ resize: 'none', verticalAlign: 'top' }}
+                onChange={(e) => setDescription(e.target.value)}
               ></textarea>
             </div>
 

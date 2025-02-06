@@ -53,6 +53,7 @@ const Job = () => {
     try {
       await dispatch(deleteJob(jobId)).unwrap();
       navigate('/jobs');
+      dispatch(showAlert('Job deleted successfully', 'success'));
     } catch (error) {
       console.error('Error deleting job:', error);
       dispatch(showAlert(error || 'Failed to delete job', 'danger'));
