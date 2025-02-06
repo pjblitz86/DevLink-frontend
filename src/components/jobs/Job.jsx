@@ -1,13 +1,17 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FaArrowLeft, FaMapMarker } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Spinner from '../../layouts/Spinner';
+import { showAlert } from '../../features/alertSlice';
+import { deleteJob } from '../../features/jobSlice';
 import api from '../../utils/api';
 
-const Job = ({ deleteJob }) => {
+const Job = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { id } = useParams();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,17 +43,20 @@ const Job = ({ deleteJob }) => {
       </p>
     );
 
-  const onDeleteClick = (jobId) => {
-    const confirm = window.confirm(
-      'Are you sure you want to delete this listing?'
+  const onDeleteClick = async (jobId) => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this job?'
     );
 
-    if (!confirm) return;
-    deleteJob(jobId);
+    if (!confirmDelete) return;
 
-    // add alert succes
-
-    navigate('/jobs');
+    try {
+      await dispatch(deleteJob(jobId)).unwrap();
+      navigate('/jobs');
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      dispatch(showAlert(error || 'Failed to delete job', 'danger'));
+    }
   };
 
   const isJobOwner =

@@ -27,6 +27,7 @@ import JobsPage from './pages/JobsPage';
 import Job from './components/jobs/Job';
 import NotFoundPage from './pages/NotFoundPage';
 import AddJob from './components/jobs/AddJob';
+import EditJob from './components/jobs/EditJob';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -101,6 +102,14 @@ const router = createBrowserRouter(
         element={
           <PrivateRoute>
             <AddJob />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path='/edit-job/:id'
+        element={
+          <PrivateRoute>
+            <EditJob />
           </PrivateRoute>
         }
       />
