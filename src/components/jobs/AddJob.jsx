@@ -2,10 +2,13 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addJob } from '../../features/jobSlice';
+import { showAlert } from '../../features/alertSlice';
 
 const AddJob = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+
   const [title, setTitle] = useState('');
   const [type, setType] = useState('Full-Time');
   const [location, setLocation] = useState('');
@@ -18,6 +21,11 @@ const AddJob = () => {
 
   const submitForm = async (e) => {
     e.preventDefault();
+
+    if (!user) {
+      dispatch(showAlert('You must be logged in to add a job.', 'danger'));
+      return;
+    }
 
     const newJob = {
       title,
@@ -34,11 +42,12 @@ const AddJob = () => {
     };
 
     try {
-      await dispatch(addJob(newJob)).unwrap();
-      console.log('Job added successfully!');
+      await dispatch(addJob({ userId: user.id, jobData: newJob })).unwrap();
+      dispatch(showAlert('Job created successfully!', 'success'));
       navigate('/jobs');
     } catch (error) {
       console.error('Error adding job:', error);
+      dispatch(showAlert(error || 'Failed to add job', 'danger'));
     }
   };
 

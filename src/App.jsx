@@ -37,7 +37,7 @@ const router = createBrowserRouter(
       <Route path='/profiles' element={<Profiles />} />
       <Route path='/jobs' element={<JobsPage />} />
       <Route path='/jobs/:id' element={<Job />} />
-      <Route path='/add-job' element={<AddJob />} />
+
       <Route path='*' element={<NotFoundPage />} />
       <Route path='profile/:id' element={<Profile />} />
       <Route
@@ -93,6 +93,14 @@ const router = createBrowserRouter(
         element={
           <PrivateRoute>
             <Post />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path='/add-job'
+        element={
+          <PrivateRoute>
+            <AddJob />
           </PrivateRoute>
         }
       />

@@ -18,10 +18,9 @@ export const fetchJobs = createAsyncThunk(
 
 export const addJob = createAsyncThunk(
   'jobs/addJob',
-  async (jobData, { rejectWithValue, dispatch }) => {
+  async ({ userId, jobData }, { rejectWithValue, dispatch }) => {
     try {
-      console.log('Sending add job post:', jobData);
-      const res = await api.post('/jobs', jobData);
+      const res = await api.post(`/jobs/user/${userId}`, jobData);
       dispatch(showAlert('Job created successfully', 'success'));
       return res.data;
     } catch (error) {
@@ -50,7 +49,7 @@ export const deleteJob = createAsyncThunk(
   'jobs/deleteJob',
   async (jobId, { rejectWithValue }) => {
     try {
-      await api.delete(`/jobs/${jobId}`, config);
+      await api.delete(`/jobs/${jobId}`);
       return jobId;
     } catch (error) {
       return rejectWithValue(

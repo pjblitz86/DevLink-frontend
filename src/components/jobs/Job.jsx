@@ -52,7 +52,8 @@ const Job = ({ deleteJob }) => {
     navigate('/jobs');
   };
 
-  const isJobOwner = isAuthenticated && user?.id === job?.user?.id;
+  const isJobOwner =
+    isAuthenticated && user?.jobs?.some((j) => j.id === job.id);
 
   return (
     <>

@@ -1,7 +1,19 @@
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { showAlert } from '../../features/alertSlice';
 import Card from './Card';
 
 const JobsCards = () => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const handleAddJobClick = (e) => {
+    if (!isAuthenticated) {
+      e.preventDefault();
+      dispatch(showAlert('You must log in first to add a job', 'danger'));
+    }
+  };
+
   return (
     <section className='py-4'>
       <div className='container-xl lg:container m-auto'>
@@ -24,7 +36,8 @@ const JobsCards = () => {
               List your job to find the perfect developer for the role
             </p>
             <Link
-              to='/add-job'
+              to={isAuthenticated ? '/add-job' : '#'}
+              onClick={handleAddJobClick}
               className='inline-block bg-indigo-500 text-white text-lg font-medium rounded-lg px-6 py-1 w-auto min-w-[150px] text-center hover:bg-indigo-600 transition duration-200'
             >
               Add Job
