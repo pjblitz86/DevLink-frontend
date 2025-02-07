@@ -39,7 +39,7 @@ const JobListing = ({ job }) => {
       <div className='mt-auto flex justify-end w-full'>
         <Link
           to={`/jobs/${job.id}`}
-          className='bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-1 rounded-lg text-center text-sm w-full flex items-center justify-center'
+          className='bg-primary hover:bg-indigo-600 text-white px-4 py-1 rounded-lg text-center text-sm w-full flex items-center justify-center'
         >
           Read More
         </Link>

@@ -71,7 +71,9 @@ const Dashboard = () => {
           <Experience experience={profile.experiences || []} />
           <Education education={profile.educations || []} />
           <section>
-            <h2 className='my-2'>Danger Zone</h2>
+            <h2 className='mb-4 mt-4 text-2xl font-bold border-b-2 border-gray-300 pb-1 text-gray-800'>
+              Danger Zone
+            </h2>
           </section>
           <div className='my-2'>
             <button className='btn btn-danger' onClick={handleDeleteProfile}>

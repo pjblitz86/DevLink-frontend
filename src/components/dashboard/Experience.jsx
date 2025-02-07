@@ -46,7 +46,9 @@ const Experience = ({ experience }) => {
 
   return (
     <section>
-      <h2 className='my-2'>Experience</h2>
+      <h2 className='mb-4 mt-4 text-2xl font-bold border-b-2 border-gray-300 pb-1 text-gray-800'>
+        Experience
+      </h2>
       <table className='table'>
         <thead>
           <tr>
