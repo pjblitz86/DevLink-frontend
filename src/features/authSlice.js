@@ -54,8 +54,6 @@ export const loadUser = createAsyncThunk(
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
 
-      console.log('Loading user with token:', token, 'and userId:', userId);
-
       if (!token || !userId) {
         console.error('No token or userId found in localStorage');
         throw new Error('Token or user ID is missing');
@@ -63,7 +61,6 @@ export const loadUser = createAsyncThunk(
 
       const { auth } = getState();
       if (auth.user) {
-        console.log('User already exists in state:', auth.user);
         return auth.user;
       }
 
@@ -97,7 +94,6 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
-        console.log('register pending');
         state.loading = true;
       })
       .addCase(register.fulfilled, (state, action) => {
@@ -114,7 +110,6 @@ const authSlice = createSlice({
         localStorage.removeItem('token');
       })
       .addCase(login.pending, (state) => {
-        console.log('login pending');
         state.loading = true;
       })
       .addCase(login.fulfilled, (state, action) => {
@@ -131,7 +126,6 @@ const authSlice = createSlice({
         localStorage.removeItem('token');
       })
       .addCase(logoutUser.pending, (state) => {
-        console.log('logoutUser pending');
         state.loading = true;
       })
       .addCase(logoutUser.fulfilled, (state) => {
@@ -139,11 +133,9 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(loadUser.pending, (state) => {
-        console.log('loadUser pending');
         state.loading = true;
       })
       .addCase(loadUser.fulfilled, (state, action) => {
-        console.log('User loaded successfully:', action.payload);
         state.isAuthenticated = true;
         state.loading = false;
         state.user = action.payload;

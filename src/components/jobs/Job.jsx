@@ -15,8 +15,8 @@ const Job = () => {
   const { id } = useParams();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isJobOwner, setIsJobOwner] = useState(false);
   const [error, setError] = useState(null);
-
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -24,6 +24,13 @@ const Job = () => {
       try {
         const res = await api.get(`/jobs/${id}`);
         setJob(res.data);
+
+        if (isAuthenticated && user) {
+          const isOwner =
+            user.jobs?.some((j) => j.id === res.data.id) ||
+            res.data.postedBy === user.id;
+          setIsJobOwner(isOwner);
+        }
       } catch (err) {
         console.error('Error fetching job:', err);
         setError('Job not found or failed to load.');
@@ -33,7 +40,7 @@ const Job = () => {
     };
 
     fetchJob();
-  }, [id]);
+  }, [id, isAuthenticated, user]);
 
   if (loading) return <Spinner />;
   if (!job || error)
@@ -59,9 +66,6 @@ const Job = () => {
       dispatch(showAlert(error || 'Failed to delete job', 'danger'));
     }
   };
-
-  const isJobOwner =
-    isAuthenticated && user?.jobs?.some((j) => j.id === job.id);
 
   return (
     <>

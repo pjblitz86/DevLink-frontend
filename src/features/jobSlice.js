@@ -6,7 +6,6 @@ export const fetchJobs = createAsyncThunk(
   async (limit, { rejectWithValue }) => {
     try {
       const response = await api.get(`/jobs${limit ? `?limit=${limit}` : ''}`);
-      console.log('Fetched jobs:', response.data);
       return response.data;
     } catch (error) {
       console.error('API Fetch Error:', error.response?.data || error.message);

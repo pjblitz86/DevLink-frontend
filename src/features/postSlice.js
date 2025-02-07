@@ -22,7 +22,6 @@ export const getPostById = createAsyncThunk(
   async (postId, { rejectWithValue }) => {
     try {
       const res = await api.get(`/posts/${postId}`);
-      console.log('Fetched post:', res.data);
       return res.data;
     } catch (err) {
       return rejectWithValue({
@@ -104,7 +103,6 @@ export const likePost = createAsyncThunk(
   async ({ userId, postId }, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.post(`/posts/${postId}/like/${userId}`);
-      console.log('API Like Response:', res.data);
       dispatch(showAlert('Post liked!', 'success'));
       return { postId, likes: res.data.likes || [] };
     } catch (err) {
@@ -273,7 +271,6 @@ const postSlice = createSlice({
             likes: Array.isArray(likes) ? [...likes] : []
           };
           state.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-          console.log('Updated post likes:', state.posts[postIndex].likes);
         }
         state.loading = false;
       })
@@ -286,7 +283,6 @@ const postSlice = createSlice({
             ...state.posts[postIndex],
             likes: Array.isArray(likes) ? [...likes] : []
           };
-          console.log('🟢 Updated post likes:', state.posts[postIndex].likes);
         }
         state.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
         state.loading = false;

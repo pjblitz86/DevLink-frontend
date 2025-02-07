@@ -24,10 +24,8 @@ const PostItem = ({ post, showActions = true }) => {
   useEffect(() => {
     const fetchProfileId = async () => {
       try {
-        console.log('Fetching profile for user:', user?.id);
         const res = await api.get(`/profiles/user/${user.id}`);
         if (res.data.data) {
-          console.log('Profile ID fetched:', res.data.data.id);
           setProfileId(res.data.data.id);
         }
       } catch (error) {
@@ -42,7 +40,6 @@ const PostItem = ({ post, showActions = true }) => {
 
   const handleLike = () => {
     if (authUser && id) {
-      console.log('Liking post:', id, 'by user:', authUser.id);
       dispatch(likePost({ userId: authUser.id, postId: id }));
     } else {
       console.error('Like failed: Missing user or post ID');
@@ -51,7 +48,6 @@ const PostItem = ({ post, showActions = true }) => {
 
   const handleUnlike = () => {
     if (authUser && id) {
-      console.log('Unliking post:', id, 'by user:', authUser.id);
       dispatch(unlikePost({ userId: authUser.id, postId: id }));
     } else {
       console.error('Unlike failed: Missing user or post ID');

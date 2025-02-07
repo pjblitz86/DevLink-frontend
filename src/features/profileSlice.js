@@ -40,9 +40,7 @@ export const getProfiles = createAsyncThunk(
   'profile/getProfiles',
   async (_, { rejectWithValue }) => {
     try {
-      console.log('Fetching all profiles...');
       const res = await api.get('/profiles');
-      console.log('Profiles received from API:', res.data);
       return res.data;
     } catch (err) {
       return rejectWithValue({
@@ -59,7 +57,6 @@ export const getProfileById = createAsyncThunk(
     try {
       const res = await api.get(`/profiles/${profileId}`);
       const profile = res.data.data;
-      console.log('Profile data:', profile);
       return profile;
     } catch (err) {
       return rejectWithValue({
@@ -136,7 +133,6 @@ export const addExperience = createAsyncThunk(
   'profile/addExperience',
   async ({ profileId, formData }, { dispatch, rejectWithValue }) => {
     try {
-      console.log('FormData being sent:', formData); // Debugging log
       const res = await api.post(
         `/profiles/${profileId}/experience/add`,
         formData
@@ -230,12 +226,10 @@ export const deleteAccount = createAsyncThunk(
         const { profile } = getState().profile;
         const profileId = profile?.id;
         if (profileId) {
-          console.log(`Deleting profile with ID: ${profileId}`);
           await api.delete(`/profiles/${profileId}`);
         } else {
           console.warn('No profile found, skipping profile deletion.');
         }
-        console.log(`Deleting user with ID: ${userId}`);
         await api.delete(`/user/${userId}`);
         dispatch(logout());
         dispatch(showAlert('Your account has been permanently deleted'));

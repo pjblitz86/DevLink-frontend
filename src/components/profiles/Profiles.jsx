@@ -12,8 +12,6 @@ const Profiles = () => {
     dispatch(getProfiles());
   }, [dispatch]);
 
-  console.log(profiles); // Debugging
-
   if (loading) return <Spinner />;
 
   return (
