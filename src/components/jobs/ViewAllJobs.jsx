@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 const ViewAllJobs = ({ loadAll, setLoadAll }) => {
   return (
     <section className='flex justify-center my-5'>

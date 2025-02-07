@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import JobsCards from './JobsCards';
 import JobListings from './JobListings';
 

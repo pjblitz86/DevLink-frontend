@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { showAlert } from '../../features/alertSlice';
 import { login } from '../../features/authSlice';
 
 const Login = () => {

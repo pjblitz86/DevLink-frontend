@@ -6,7 +6,6 @@ import {
   createOrUpdateProfile,
   getCurrentUserProfile
 } from '../../features/profileSlice';
-import Spinner from '../../layouts/Spinner';
 
 const initialState = {
   company: '',
@@ -29,7 +28,7 @@ const CreateProfile = () => {
   const creatingProfile = useMatch('/create-profile');
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
 
-  const { profile, loading } = useSelector((state) => state.profile);
+  const { profile } = useSelector((state) => state.profile);
   const [formData, setFormData] = useState(initialState);
 
   useEffect(() => {

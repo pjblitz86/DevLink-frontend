@@ -239,7 +239,7 @@ const postSlice = createSlice({
           (post) => post.id === action.payload.id
         );
         if (index !== -1) {
-          state.posts[index] = action.payload; // Update the post in the array
+          state.posts[index] = action.payload;
         }
         state.loading = false;
       })

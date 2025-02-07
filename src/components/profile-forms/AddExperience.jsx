@@ -7,6 +7,7 @@ const AddExperience = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.profile.profile);
+  const [toDateDisabled, toggleToDateDisabled] = useState(false);
   const [formData, setFormData] = useState({
     company: '',
     title: '',
@@ -16,8 +17,6 @@ const AddExperience = () => {
     current: false,
     description: ''
   });
-
-  const [toDateDisabled, toggleToDateDisabled] = useState(false);
 
   const { company, title, location, from, to, current, description } = formData;
 

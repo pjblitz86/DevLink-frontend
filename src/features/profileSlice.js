@@ -101,8 +101,8 @@ export const createOrUpdateProfile = createAsyncThunk(
       dispatch(
         showAlert(
           edit
-            ? 'Profile successfully updated'
-            : 'Profile successfully created',
+            ? 'Profile updated successfully'
+            : 'Profile created successfully',
           'success'
         )
       );
@@ -153,7 +153,7 @@ export const deleteExperience = createAsyncThunk(
     try {
       await api.delete(`/experience/${experienceId}`);
       dispatch(showAlert('Experience removed successfully', 'success'));
-      return experienceId; // Return ID to remove from local state
+      return experienceId;
     } catch (err) {
       console.error('Error deleting experience:', err);
       dispatch(showAlert('Failed to remove experience', 'danger'));

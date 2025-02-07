@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const DashboardActions = () => {
-  const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.profile);
 
   return (

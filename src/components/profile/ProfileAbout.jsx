@@ -9,7 +9,6 @@ const ProfileAbout = () => {
   const { bio, skills, user } = profile;
   const firstName = user?.name ? user.name.split(' ')[0] : 'User';
 
-  // Ensure skills is always an array
   const skillsArray = Array.isArray(skills)
     ? skills
     : skills?.split(',').map((skill) => skill.trim()) || [];
