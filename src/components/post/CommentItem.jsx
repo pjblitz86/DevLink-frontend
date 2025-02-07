@@ -21,10 +21,12 @@ const CommentItem = ({ postId, comment }) => {
 
   return (
     <div className='post bg-white p-1 my-1'>
-      <div>
+      <div className='flex flex-col items-center'>
         <Link to={profileId ? `/profile/${profileId}` : '#'}>
           <img className='round-img' src={avatar} alt='' />
-          <h4>{name}</h4>
+          <h4 className='mt-2 text-center text-blue-600 hover:underline'>
+            {name}
+          </h4>
         </Link>
       </div>
       <div>

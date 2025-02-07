@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../utils/api';
-import { showAlert } from './alertSlice';
 
 export const fetchJobs = createAsyncThunk(
   'jobs/fetchJobs',
@@ -21,7 +20,6 @@ export const addJob = createAsyncThunk(
   async ({ userId, jobData }, { rejectWithValue, dispatch }) => {
     try {
       const res = await api.post(`/jobs/user/${userId}`, jobData);
-      dispatch(showAlert('Job created successfully', 'success'));
       return res.data;
     } catch (error) {
       return rejectWithValue(

@@ -44,6 +44,7 @@ const AddJob = () => {
     try {
       await dispatch(addJob({ userId: user.id, jobData: newJob })).unwrap();
       navigate('/jobs');
+      dispatch(showAlert('Job created successfully', 'success'));
     } catch (error) {
       console.error('Error adding job:', error);
       dispatch(showAlert(error || 'Failed to add job', 'danger'));

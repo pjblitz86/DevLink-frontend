@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { editJob } from '../../features/jobSlice';
+import { showAlert } from '../../features/alertSlice';
 import api from '../../utils/api';
 
 const EditJob = () => {
@@ -78,6 +79,7 @@ const EditJob = () => {
     try {
       await dispatch(editJob({ jobId: id, jobData: updatedJob })).unwrap();
       navigate(`/jobs/${id}`);
+      dispatch(showAlert('Job edited successfully', 'success'));
     } catch (error) {
       console.error('Error updating job:', error);
     }
