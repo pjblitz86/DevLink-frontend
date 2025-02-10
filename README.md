@@ -28,9 +28,10 @@ Css responsive design, additional tailwind classes, quickly change primary, dark
 
 ### Authentication
 
-Login, register, logout, navbar logic to not show private route pages
-Public pages - developers and jobs, the rest are private - user login needed
-Token (jwt) is saved in localStorage on the frontend and then sent with each request to access protected routes. Spring security configuration + jwt is used on the backend to decode the token and authorize the user.
+Login, register, logout, navbar logic to not show private route pages.
+Public pages - developers and jobs, the rest are private - user login needed.  
+Token (jwt) is saved in localStorage on the frontend and then sent with each request to access protected routes.  
+ Spring security configuration + jwt is used on the backend to decode the token and authorize the user.
 
 ### Redux toolkit state
 
@@ -47,17 +48,25 @@ If user is logged in or just registered - will be redirected to dashboard
 
 ### Dashboard page - protected
 
-Only for authenticated users. When user first comes here, profile can be created and is then attached to the user. User can be without profile also. Profile creation form must be filled and validated for required fields. When that is successful dashboard changes to these sections: UI buttons - view profile, edit profile, add experience, add education, Experience section - optional, user can add job experiences via form or delete them, Education - optional, can add or delete educations, Danger Zone - delete profile and account options. Edit profile works on the same form as create profile (code reuse)
+Only for authenticated users. When user first comes here, profile can be created and is then attached to the user. User can be without profile also.  
+Profile creation form must be filled and validated for required fields.
+When that is successful dashboard changes to these sections:
+○ UI buttons - view profile, edit profile, add experience, add education
+○ Experience section - optional, user can add job experiences via form or delete them
+○ Education - optional, can add or delete educations
+○ Danger Zone - delete profile and account options.
+Edit profile works on the same form as create profile (code reuse).
 
 ### Developers page - profiles
 
-All user created profiles from db are displayed here. Can go into each individual profile via button and will be displayed on separate page. Authenticated users can then edit only their own profile (edit button appears). User profile picture appears if they use email which was associated with gravatar, otherwise - default placeholder picture
+All user created profiles from db are displayed here. Can go into each individual profile via button and will be displayed on separate page.  
+Authenticated users can then edit only their own profile (edit button appears). User profile picture appears if they use email which was associated with gravatar, otherwise - default placeholder picture
 
 ### Posts page - protected
 
-Upper part - form to create a post with submit button
+Upper part - form to create a post with submit button.
 Lower part - all created posts are displayed and sorted by newest creation date.
-In individual post component - profile picture with name is displayed - can go directly to that users profile, like, unlike buttons functionality, discussion button displays how many comments are to this post and leads into separate comments page. Delete button appears only for users who created that post. If you delete the post all associated comments will be deleted as well
+In individual post component - profile picture with name is displayed - can go directly to that users profile, like, unlike buttons functionality, discussion button displays how many comments are to this post and leads into separate comments page. Delete button appears only for users who created that post. If you delete the post all associated comments will be deleted as well.
 
 ### Comments page - protected
 
