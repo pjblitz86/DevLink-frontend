@@ -49,12 +49,12 @@ If user is logged in or just registered - will be redirected to dashboard
 ### Dashboard page - protected
 
 Only for authenticated users. When user first comes here, profile can be created and is then attached to the user. User can be without profile also.  
-Profile creation form must be filled and validated for required fields.
-When that is successful dashboard changes to these sections:
-○ UI buttons - view profile, edit profile, add experience, add education
-○ Experience section - optional, user can add job experiences via form or delete them
-○ Education - optional, can add or delete educations
-○ Danger Zone - delete profile and account options.
+Profile creation form must be filled and validated for required fields.  
+When that is successful dashboard changes to these sections:  
+○ UI buttons - view profile, edit profile, add experience, add education.  
+○ Experience section - optional, user can add job experiences via form or delete them.  
+○ Education - optional, can add or delete educations.  
+○ Danger Zone - delete profile and account options.  
 Edit profile works on the same form as create profile (code reuse).
 
 ### Developers page - profiles
