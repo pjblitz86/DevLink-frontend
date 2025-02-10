@@ -5,12 +5,6 @@ import { Link } from 'react-router-dom';
 const JobListing = ({ job }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
-  let description = job.description;
-
-  if (!showFullDescription) {
-    description = description.substring(0, 90) + '...';
-  }
-
   return (
     <div className='bg-white rounded-xl shadow-md flex flex-col h-full p-4'>
       <div className='flex-grow'>
@@ -19,7 +13,11 @@ const JobListing = ({ job }) => {
           <h3 className='text-xl font-bold'>{job.title}</h3>
         </div>
 
-        <div className='mb-5'>{description}</div>
+        <div className='mb-5'>
+          {showFullDescription
+            ? job.description
+            : `${job.description.substring(0, 60)}...`}
+        </div>
 
         <button
           onClick={() => setShowFullDescription((prevState) => !prevState)}
