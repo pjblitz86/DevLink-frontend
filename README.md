@@ -1,6 +1,6 @@
 # DevLink - Frontend
 
-DevLink is a social platform (linkedin clone) for developers to connect, share experiences and check the available jobs. This repository contains the frontend implementation using **React**, **Redux Toolkit** to provide a smooth and interactive user experience.
+DevLink is a social platform (linkedin clone) for developers to connect, share experiences and check the available jobs. This repository contains the frontend implementation using **React**, **Redux Toolkit** to provide a smooth and interactive user experience. Must be run with backend part which can be found here [DevLink Backend](https://github.com/pjblitz86/DevLink-backend)
 
 ## 📦 Installation
 
@@ -74,7 +74,7 @@ The app will be available at **http://localhost:3000**
 ### **Backend (Connected to Frontend)**
 
 - [DevLink Backend](https://github.com/pjblitz86/DevLink-backend)
-- Built with **Spring Boot**, **Spring Security**, **JWT**, and **MongoDB**.
+- Built with **Java Spring Boot** and **mySQL**.
 
 ## 📂 Project Structure
 
