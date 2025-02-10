@@ -67,13 +67,14 @@ The app will be available at **http://localhost:3000**
 
 - **React**: Functional components and hooks-based implementation.
 - **Redux Toolkit**: State management with slices.
+- **React Router DOM**: Client-side routing for navigation.
 - **Axios**: API requests to interact with the backend.
 - **CSS & Tailwind**: Responsive and clean UI design.
 
 ### **Backend (Connected to Frontend)**
 
 - [DevLink Backend](https://github.com/pjblitz86/DevLink-backend)
-- Built with **Java Spring Boot** and **mySQL**.
+- Built with **Spring Boot**, **Spring Security**, **JWT**, and **MongoDB**.
 
 ## 📂 Project Structure
 
@@ -150,21 +151,6 @@ DevLink-frontend/
   - "View All Jobs" button loads all jobs.
   - Each job card shows relevant info.
   - Individual job pages allow viewing, editing, or deleting jobs via the "Read More" button.
-
-## 🛠️ Tech Stack
-
-### **Frontend**
-
-- **React**: Functional components and hooks-based implementation.
-- **Redux Toolkit**: State management with slices.
-- **React Router DOM**: Client-side routing for navigation.
-- **Axios**: API requests to interact with the backend.
-- **CSS & Tailwind**: Responsive and clean UI design.
-
-### **Backend (Connected to Frontend)**
-
-- [DevLink Backend](https://github.com/pjblitz86/DevLink-backend)
-- Built with **Spring Boot**, **Spring Security**, **JWT**, and **MongoDB**.
 
 ## 📜 License
 
