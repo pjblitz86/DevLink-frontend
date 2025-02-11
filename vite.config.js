@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '/api': {
           target: isProduction
-            ? 'https://devlink-deploy.onrender.com' // Production API
+            ? import.meta.env.VITE_API_URL // Production API
             : 'http://localhost:8080', // Development API
           changeOrigin: true,
           secure: false
