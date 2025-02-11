@@ -13,18 +13,19 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const publicRoutes = [
-      '/api/register',
-      '/api/login',
-      '/api/profiles',
-      '/api/jobs'
-    ];
+    const publicRoutes = ['/api/register', '/api/login'];
+    const publicGetRoutes = ['/api/profiles', '/api/jobs'];
+
+    const isPublicGetRoute =
+      config.method === 'get' &&
+      publicGetRoutes.some((route) => config.url.startsWith(route));
 
     const isPublicRoute = publicRoutes.some((route) =>
       config.url.startsWith(route)
     );
+
     const token = localStorage.getItem('token');
-    if (!isPublicRoute && token) {
+    if (!isPublicRoute && !isPublicGetRoute && token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
