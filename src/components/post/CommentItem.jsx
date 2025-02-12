@@ -1,21 +1,31 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import formatDateMinSec from '../../utils/formatDateMinSec';
-import { deleteComment } from '../../features/postSlice';
+import { deleteComment, getPostById } from '../../features/postSlice';
+import { getProfiles } from '../../features/profileSlice';
 
-const CommentItem = ({ postId, comment }) => {
+const CommentItem = ({ comment, postId }) => {
   const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.auth);
-  const { id, text, name, avatar, post, date } = comment;
+  const { id, text, name, avatar, date } = comment;
   const { profiles } = useSelector((state) => state.profile);
 
-  const profile = profiles?.find((p) => p.user?.name === name);
-  const profileId = profile?.id;
+  useEffect(() => {
+    if (!profiles || profiles.length === 0) {
+      dispatch(getProfiles());
+    }
+  }, [dispatch, profiles]);
 
-  const handleDelete = () => {
+  const profile = profiles?.find(
+    (p) => p.user?.name.trim().toLowerCase() === name.trim().toLowerCase()
+  );
+  const profileId = profile?.id || null;
+
+  const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this comment?')) {
-      dispatch(deleteComment({ postId, commentId: id }));
+      await dispatch(deleteComment(id));
+      dispatch(getPostById(postId));
     }
   };
 
@@ -32,7 +42,7 @@ const CommentItem = ({ postId, comment }) => {
       <div>
         <p className='my-1'>{text}</p>
         <p className='post-date'>Posted on {formatDateMinSec(date)}</p>
-        {!loading && user?.id === post?.user?.id && (
+        {!loading && user?.name === name && (
           <button
             onClick={handleDelete}
             type='button'

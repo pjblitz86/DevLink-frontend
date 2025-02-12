@@ -10,12 +10,18 @@ import { getPostById } from '../../features/postSlice';
 const Post = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-
   const { post, loading } = useSelector((state) => state.post);
 
   useEffect(() => {
     dispatch(getPostById(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (post?.id) {
+      dispatch(getPostById(id));
+      console.log('rerender');
+    }
+  }, [dispatch, id, post?.comments.length]);
 
   return loading || post === null ? (
     <Spinner />

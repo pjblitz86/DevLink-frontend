@@ -155,11 +155,11 @@ export const addComment = createAsyncThunk(
 
 export const deleteComment = createAsyncThunk(
   'post/deleteComment',
-  async ({ postId, commentId }, { dispatch, rejectWithValue }) => {
+  async (commentId, { dispatch, rejectWithValue }) => {
     try {
       await api.delete(`/posts/comment/${commentId}`);
       dispatch(showAlert('Comment deleted successfully', 'success'));
-      return { postId, commentId };
+      return commentId;
     } catch (err) {
       dispatch(showAlert('Failed to delete comment', 'danger'));
       return rejectWithValue(err.response?.data || 'Failed to delete comment');
@@ -298,12 +298,27 @@ const postSlice = createSlice({
       })
       .addCase(deleteComment.fulfilled, (state, action) => {
         const { postId, commentId } = action.payload;
-        const post = state.posts.find((p) => p.id === postId);
-        if (post) {
-          post.comments = post.comments.filter(
-            (comment) => comment.id !== commentId
-          );
+
+        if (state.post && state.post.id === postId) {
+          state.post = {
+            ...state.post,
+            comments: state.post.comments.filter(
+              (comment) => comment.id !== commentId
+            )
+          };
         }
+
+        state.posts = state.posts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                comments: post.comments.filter(
+                  (comment) => comment.id !== commentId
+                )
+              }
+            : post
+        );
+
         state.loading = false;
       });
   }
