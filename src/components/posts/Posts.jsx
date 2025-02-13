@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getPosts } from '../../features/postSlice';
 import Spinner from '../../layouts/Spinner';
@@ -7,10 +7,16 @@ import PostForm from './PostForm';
 
 const Posts = () => {
   const dispatch = useDispatch();
-  const { posts, loading } = useSelector((state) => state.post);
+  const { loading } = useSelector((state) => state.post);
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    dispatch(getPosts());
+    dispatch(getPosts())
+      .unwrap()
+      .then((fetchedPosts) => {
+        setPosts(fetchedPosts);
+      })
+      .catch((error) => console.error('Error fetching posts:', error));
   }, [dispatch]);
 
   return loading ? (
@@ -21,7 +27,7 @@ const Posts = () => {
       <p className='lead'>
         <i className='fas fa-user' /> Welcome to the DevLink community
       </p>
-      <PostForm />
+      <PostForm setPosts={setPosts} posts={posts} />
       <div className='posts'>
         {Array.isArray(posts) && posts.length > 0 ? (
           posts.map((post) => <PostItem key={post.id} post={post} />)

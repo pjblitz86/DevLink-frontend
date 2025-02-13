@@ -10,16 +10,7 @@ const PostItem = ({ post, showActions = true }) => {
   const { user: authUser, loading } = useSelector((state) => state.auth);
   const [profileId, setProfileId] = useState(null);
 
-  const {
-    id,
-    text,
-    user,
-    name,
-    avatar,
-    likes = [],
-    comments = [],
-    date
-  } = post;
+  const { id, text, user, name, likes = [], comments = [], date } = post;
 
   useEffect(() => {
     const fetchProfileId = async () => {
@@ -64,7 +55,7 @@ const PostItem = ({ post, showActions = true }) => {
     <div className='post bg-white p-1 my-1'>
       <div className='flex flex-col items-center'>
         <Link to={profileId ? `/profile/${profileId}` : '#'}>
-          <img className='round-img' src={avatar} alt='Avatar' />
+          <img className='round-img' src={user.avatar} alt='Avatar' />
           <h4 className='mt-2 text-center text-blue-600 hover:underline'>
             {name}
           </h4>

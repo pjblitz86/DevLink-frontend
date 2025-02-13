@@ -1,30 +1,49 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost } from '../../features/postSlice';
+import { showAlert } from '../../features/alertSlice';
 
-const PostForm = () => {
+const PostForm = ({ setPosts, posts }) => {
   const dispatch = useDispatch();
   const [text, setText] = useState('');
-
   const { user } = useSelector((state) => state.auth);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (!user) {
-      alert('You must be logged in to post.');
+      dispatch(showAlert('You must be logged in to post.', 'danger'));
       return;
     }
-    dispatch(
-      createPost({
-        userId: user.id,
-        formData: {
-          text,
-          name: user.name,
-          avatar: user.avatar
-        }
+
+    if (!text.trim()) {
+      dispatch(showAlert('Post content cannot be empty', 'danger'));
+      return;
+    }
+
+    const newPostData = {
+      userId: user.id,
+      formData: { text, name: user.name }
+    };
+
+    dispatch(createPost(newPostData))
+      .unwrap()
+      .then((createdPost) => {
+        const postWithAvatar = {
+          ...createdPost,
+          user: {
+            ...createdPost.user,
+            avatar: user.avatar
+          }
+        };
+
+        setPosts([postWithAvatar, ...posts]);
+        setText('');
       })
-    );
-    setText('');
+      .catch((error) => {
+        console.error('Post creation failed:', error);
+        dispatch(showAlert('Failed to create post', 'danger'));
+      });
   };
 
   return (
