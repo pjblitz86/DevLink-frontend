@@ -19,7 +19,6 @@ const Post = () => {
   useEffect(() => {
     if (post?.id) {
       dispatch(getPostById(id));
-      console.log('rerender');
     }
   }, [dispatch, id, post?.comments.length]);
 

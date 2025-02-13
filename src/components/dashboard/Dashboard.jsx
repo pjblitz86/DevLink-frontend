@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DashboardActions from './DashboardActions';
@@ -6,11 +6,13 @@ import {
   clearProfile,
   getCurrentUserProfile,
   deleteProfile,
-  deleteAccount
+  deleteAccount,
+  uploadAvatar
 } from '../../features/profileSlice';
 import Spinner from '../../layouts/Spinner';
 import Experience from './Experience';
 import Education from './Education';
+import { showAlert } from '../../features/alertSlice';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -23,6 +25,7 @@ const Dashboard = () => {
     isAuthenticated,
     loading: authLoading
   } = useSelector((state) => state.auth);
+  const [avatar, setAvatar] = useState(user?.avatar || '');
 
   useEffect(() => {
     if (profile && profile.user && user && profile.user.id !== user.id) {
@@ -35,6 +38,26 @@ const Dashboard = () => {
   }, [dispatch]);
 
   if (profileLoading || authLoading) return <Spinner />;
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      if (file.size > 500 * 1024) {
+        dispatch(showAlert('File size must be under 500KB', 'danger'));
+        return;
+      }
+
+      dispatch(uploadAvatar({ userId: user.id, file }))
+        .unwrap()
+        .then((avatarUrl) => {
+          setAvatar(avatarUrl);
+        })
+        .catch((error) => {
+          console.error('Upload failed:', error);
+        });
+    }
+  };
 
   const handleDeleteProfile = async () => {
     if (window.confirm('Are you sure you want to delete your profile?')) {
@@ -67,6 +90,25 @@ const Dashboard = () => {
       </p>
       {profile ? (
         <>
+          <div className='relative inline-block cursor-pointer'>
+            <label htmlFor='avatarUpload'>
+              <img
+                src={avatar}
+                alt={`${user.name}'s avatar`}
+                className='w-40 h-40 rounded-full object-cover border border-gray-300'
+              />
+              <div className='absolute bottom-0 right-0 bg-gray-800 text-white p-1 rounded-full text-[10px] cursor-pointer hover:bg-gray-700 transition'>
+                <i className='fas fa-camera text-[14px]'></i>
+              </div>
+            </label>
+            <input
+              type='file'
+              id='avatarUpload'
+              accept='image/*'
+              className='hidden'
+              onChange={handleFileChange}
+            />
+          </div>
           <DashboardActions />
           <Experience experience={profile.experiences || []} />
           <Education education={profile.educations || []} />

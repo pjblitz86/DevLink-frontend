@@ -129,6 +129,27 @@ export const createOrUpdateProfile = createAsyncThunk(
   }
 );
 
+export const uploadAvatar = createAsyncThunk(
+  'user/uploadAvatar',
+  async ({ userId, file }, { dispatch, rejectWithValue }) => {
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      const res = await api.post(`/user/upload-avatar/${userId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      dispatch(showAlert('Avatar updated successfully', 'success'));
+      return res.data.data;
+    } catch (err) {
+      dispatch(showAlert('Failed to upload avatar', 'danger'));
+      return rejectWithValue(err.response?.data || 'Failed to upload avatar');
+    }
+  }
+);
+
 export const addExperience = createAsyncThunk(
   'profile/addExperience',
   async ({ profileId, formData }, { dispatch, rejectWithValue }) => {
@@ -439,6 +460,21 @@ const profileSlice = createSlice({
         state.loading = false;
       })
       .addCase(deleteAccount.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+    // avatar
+    builder
+      .addCase(uploadAvatar.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(uploadAvatar.fulfilled, (state, action) => {
+        if (state.profile && state.profile.user) {
+          state.profile.user.avatar = action.payload;
+        }
+        state.loading = false;
+      })
+      .addCase(uploadAvatar.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });
