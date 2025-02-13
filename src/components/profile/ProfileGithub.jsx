@@ -29,14 +29,18 @@ const ProfileGithub = ({ username }) => {
   return (
     <div className='profile-github'>
       <h2 className='text-primary my-1'>
-        <a
-          href={githubProfileUrl}
-          target='_blank'
-          rel='noopener noreferrer'
-          className='text-primary hover:underline'
-        >
-          Github Repos
-        </a>
+        {repos.length > 0 ? (
+          <a
+            href={githubProfileUrl}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-primary hover:underline'
+          >
+            Github Repos
+          </a>
+        ) : (
+          'Github Repos'
+        )}
       </h2>
 
       {loading ? (

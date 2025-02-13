@@ -68,6 +68,11 @@ The app will be available at **http://localhost:3000**
   - The uploaded avatar updates in profiles, posts, comments, and the dashboard immediately.
   - Images are stored in the backend and accessible via /uploads/ directory.
 
+### **GitHub Profiles Integration**
+
+- Users can link their **GitHub profile** by adding their **GitHub username** to their profile.
+- The latest **5 repositories** from their GitHub account will be displayed on their profile.
+
 ## 🛠️ Tech Stack
 
 ### **Frontend**
@@ -122,6 +127,7 @@ DevLink-frontend/
 
   - Only accessible by authenticated users.
   - Profile creation form with required field validation.
+  - Users can upload a custom profile picture.
   - If a profile exists, dashboard sections include:
     - **Profile Actions**: View, Edit Profile, Add Experience, Add Education.
     - **Experience Section**: Add and remove job experiences.
@@ -134,7 +140,13 @@ DevLink-frontend/
   - Displays all user-created profiles from the database.
   - Users can view individual profiles via a button.
   - Authenticated users can edit only their own profiles.
-  - Profile pictures appear via Gravatar; default placeholder for others.
+  - Profile pictures appear via Gravatar or user uploaded; default placeholder for others.
+
+- **Individual Profile (Profile page)**
+
+  - Shows UI of all the fields entered via create profile form.
+  - Social media pressable links which take to corresponding sites
+  - Github Repos feature - if user entered corrected github user name in create/update profile form an api call will fetch the last 5 user github repos with clickable links.
 
 - **Posts Page** (Protected)
 
