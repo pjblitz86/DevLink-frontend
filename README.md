@@ -57,9 +57,16 @@ The app will be available at **http://localhost:3000**
   - `loadUser` ensures the token is valid even after closing and reopening the tab.
 
 - **Custom Alerts**
+
   - Success and danger alerts.
   - Displays validation errors.
   - Alerts for post, edit, and delete operations to show success or failure.
+
+- **User avatar picture upload**
+
+  - Users can upload a profile picture from their dashboard.
+  - The uploaded avatar updates in profiles, posts, comments, and the dashboard immediately.
+  - Images are stored in the backend and accessible via /uploads/ directory.
 
 ## 🛠️ Tech Stack
 
