@@ -1,15 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getGithubRepos } from '../../features/profileSlice';
 import Spinner from '../../layouts/Spinner';
+import axios from 'axios';
 
 const ProfileGithub = ({ username }) => {
-  const dispatch = useDispatch();
-  const { repos, loading, profile } = useSelector((state) => state.profile);
+  const [repos, setRepos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const githubProfileUrl = `https://github.com/${username}`;
+
+  useEffect(() => {
+    const fetchRepos = async () => {
+      try {
+        const res = await axios.get(
+          `https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc`
+        );
+        setRepos(res.data);
+      } catch (error) {
+        console.error('Error fetching GitHub repositories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (username) {
+      fetchRepos();
+    }
+  }, [username]);
 
   return (
     <div className='profile-github'>
-      <h2 className='text-primary my-1'>Github Repos</h2>
+      <h2 className='text-primary my-1'>
+        <a
+          href={githubProfileUrl}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='text-primary hover:underline'
+        >
+          Github Repos
+        </a>
+      </h2>
+
       {loading ? (
         <Spinner />
       ) : repos.length > 0 ? (
