@@ -264,27 +264,16 @@ const postSlice = createSlice({
       // likes
       .addCase(likePost.fulfilled, (state, action) => {
         const { postId, likes } = action.payload;
-        const postIndex = state.posts.findIndex((p) => p.id === postId);
-        if (postIndex !== -1) {
-          state.posts[postIndex] = {
-            ...state.posts[postIndex],
-            likes: Array.isArray(likes) ? [...likes] : []
-          };
-          state.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-        }
+        state.posts = state.posts.map((post) =>
+          post.id === postId ? { ...post, likes } : post
+        );
         state.loading = false;
       })
       .addCase(unlikePost.fulfilled, (state, action) => {
         const { postId, likes } = action.payload;
-        const postIndex = state.posts.findIndex((p) => p.id === postId);
-
-        if (postIndex !== -1) {
-          state.posts[postIndex] = {
-            ...state.posts[postIndex],
-            likes: Array.isArray(likes) ? [...likes] : []
-          };
-        }
-        state.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        state.posts = state.posts.map((post) =>
+          post.id === postId ? { ...post, likes } : post
+        );
         state.loading = false;
       })
       // comments

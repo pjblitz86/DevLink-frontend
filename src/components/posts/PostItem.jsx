@@ -5,10 +5,12 @@ import api from '../../utils/api';
 import formatDateMinSec from '../../utils/formatDateMinSec';
 import { deletePost, likePost, unlikePost } from '../../features/postSlice';
 
-const PostItem = ({ post, showActions = true, setPosts, posts }) => {
+const PostItem = ({ post, showActions = true }) => {
   const dispatch = useDispatch();
   const { user: authUser, loading } = useSelector((state) => state.auth);
   const [profileId, setProfileId] = useState(null);
+  const { posts } = useSelector((state) => state.post);
+  const updatedPost = posts.find((p) => p.id === post.id) || post;
   const { id, text, user, name, likes = [], comments = [], date } = post;
 
   useEffect(() => {
@@ -47,7 +49,6 @@ const PostItem = ({ post, showActions = true, setPosts, posts }) => {
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       dispatch(deletePost({ postId: id, userId: authUser.id })).unwrap();
-      setPosts(posts.filter((p) => p.id !== id));
     }
   };
 
@@ -72,7 +73,9 @@ const PostItem = ({ post, showActions = true, setPosts, posts }) => {
               className='btn btn-light'
             >
               <i className='fas fa-thumbs-up' />{' '}
-              {likes?.length > 0 && <span>{likes.length}</span>}
+              {updatedPost.likes.length > 0 && (
+                <span>{updatedPost.likes.length}</span>
+              )}
             </button>
             <button
               onClick={handleUnlike}
@@ -83,8 +86,10 @@ const PostItem = ({ post, showActions = true, setPosts, posts }) => {
             </button>
             <Link to={`/post/${id}`} className='btn btn-primary'>
               Discussion{' '}
-              {comments?.length > 0 && (
-                <span className='comment-count'>{comments.length}</span>
+              {updatedPost.comments?.length > 0 && (
+                <span className='comment-count'>
+                  {updatedPost.comments.length}
+                </span>
               )}
             </Link>
             {!loading && authUser?.id === user.id && (
