@@ -14,9 +14,18 @@ export const register = createAsyncThunk(
       dispatch(showAlert('Registration successful', 'success'));
       return res.data;
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Registration failed';
+      let errorMessage = 'Registration failed';
+
+      if (err.response?.data) {
+        if (typeof err.response.data === 'string') {
+          errorMessage = err.response.data;
+        } else if (typeof err.response.data === 'object') {
+          errorMessage = Object.values(err.response.data).join(', ');
+        }
+      }
+
       dispatch(showAlert(errorMessage, 'danger'));
-      return rejectWithValue(err.response?.data || errorMessage);
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -32,7 +41,7 @@ export const login = createAsyncThunk(
       dispatch(showAlert('Login successful', 'success'));
       return res.data;
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Login failed';
+      const errorMessage = err.response?.data || 'Login failed';
       dispatch(showAlert(errorMessage, 'danger'));
       return rejectWithValue(err.response?.data || errorMessage);
     }
