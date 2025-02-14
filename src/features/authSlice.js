@@ -14,8 +14,9 @@ export const register = createAsyncThunk(
       dispatch(showAlert('Registration successful', 'success'));
       return res.data;
     } catch (err) {
-      dispatch(showAlert('Registration failed', 'danger'));
-      return rejectWithValue(err.response?.data || 'Registration failed');
+      const errorMessage = err.response?.data?.message || 'Registration failed';
+      dispatch(showAlert(errorMessage, 'danger'));
+      return rejectWithValue(err.response?.data || errorMessage);
     }
   }
 );
@@ -31,8 +32,9 @@ export const login = createAsyncThunk(
       dispatch(showAlert('Login successful', 'success'));
       return res.data;
     } catch (err) {
-      dispatch(showAlert('Login failed', 'danger'));
-      return rejectWithValue(err.response?.data || 'Login failed');
+      const errorMessage = err.response?.data?.message || 'Login failed';
+      dispatch(showAlert(errorMessage, 'danger'));
+      return rejectWithValue(err.response?.data || errorMessage);
     }
   }
 );

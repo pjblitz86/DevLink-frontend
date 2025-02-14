@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import Spinner from '../../layouts/Spinner';
-import { getProfileById, getGithubRepos } from '../../features/profileSlice';
+import { getProfileById } from '../../features/profileSlice';
 import ProfileTop from './ProfileTop';
 import ProfileAbout from './ProfileAbout';
 import ProfileExperience from './ProfileExperience';

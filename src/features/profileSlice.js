@@ -67,24 +67,6 @@ export const getProfileById = createAsyncThunk(
   }
 );
 
-export const getGithubRepos = createAsyncThunk(
-  'profile/getGithubRepos',
-  async (username, { getState, rejectWithValue }) => {
-    try {
-      const res = await api.get(`/github/${username}`);
-      return res.data || [];
-    } catch (err) {
-      if (err.response?.status === 401) {
-        console.error('GitHub API: Unauthorized request');
-        return rejectWithValue(
-          'Unauthorized. Please check your token or credentials.'
-        );
-      }
-      return rejectWithValue('Failed to fetch GitHub repositories.');
-    }
-  }
-);
-
 export const createOrUpdateProfile = createAsyncThunk(
   'profile/createOrUpdateProfile',
   async ({ formData, edit }, { dispatch, rejectWithValue }) => {
@@ -327,21 +309,6 @@ const profileSlice = createSlice({
       })
       .addCase(getProfileById.rejected, (state, action) => {
         state.error = action.payload;
-        state.loading = false;
-      });
-
-    // getGithubRepos
-    builder
-      // .addCase(getGithubRepos.pending, (state) => {
-      //   state.loading = true;
-      // }) TODO
-      .addCase(getGithubRepos.fulfilled, (state, action) => {
-        state.repos = action.payload;
-        state.loading = false;
-      })
-      .addCase(getGithubRepos.rejected, (state, action) => {
-        state.repos = [];
-        state.error = action.payload || 'Failed to fetch GitHub repos';
         state.loading = false;
       });
 
