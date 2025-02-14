@@ -30,7 +30,14 @@ const Posts = () => {
       <PostForm setPosts={setPosts} posts={posts} />
       <div className='posts'>
         {Array.isArray(posts) && posts.length > 0 ? (
-          posts.map((post) => <PostItem key={post.id} post={post} />)
+          posts.map((post) => (
+            <PostItem
+              key={post.id}
+              post={post}
+              setPosts={setPosts}
+              posts={posts}
+            />
+          ))
         ) : (
           <h4>No posts found...</h4>
         )}

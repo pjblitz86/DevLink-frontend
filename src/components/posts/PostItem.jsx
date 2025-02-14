@@ -5,11 +5,10 @@ import api from '../../utils/api';
 import formatDateMinSec from '../../utils/formatDateMinSec';
 import { deletePost, likePost, unlikePost } from '../../features/postSlice';
 
-const PostItem = ({ post, showActions = true }) => {
+const PostItem = ({ post, showActions = true, setPosts, posts }) => {
   const dispatch = useDispatch();
   const { user: authUser, loading } = useSelector((state) => state.auth);
   const [profileId, setProfileId] = useState(null);
-
   const { id, text, user, name, likes = [], comments = [], date } = post;
 
   useEffect(() => {
@@ -47,7 +46,8 @@ const PostItem = ({ post, showActions = true }) => {
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this post?')) {
-      dispatch(deletePost({ postId: id, userId: authUser.id }));
+      dispatch(deletePost({ postId: id, userId: authUser.id })).unwrap();
+      setPosts(posts.filter((p) => p.id !== id));
     }
   };
 
