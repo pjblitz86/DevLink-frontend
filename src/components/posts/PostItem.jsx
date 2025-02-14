@@ -10,7 +10,7 @@ const PostItem = ({ post, showActions = true }) => {
   const { user: authUser, loading } = useSelector((state) => state.auth);
   const [profileId, setProfileId] = useState(null);
   const { posts } = useSelector((state) => state.post);
-  const updatedPost = posts.find((p) => p.id === post.id) || post;
+  const updatedPost = posts.find((p) => p.id === post.id);
   const { id, text, user, name, likes = [], comments = [], date } = post;
 
   useEffect(() => {
@@ -51,6 +51,8 @@ const PostItem = ({ post, showActions = true }) => {
       dispatch(deletePost({ postId: id, userId: authUser.id })).unwrap();
     }
   };
+
+  if (!updatedPost) return null;
 
   return (
     <div className='post bg-white p-1 my-1'>
