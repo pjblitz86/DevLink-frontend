@@ -1,46 +1,38 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaArrowLeft, FaMapMarker } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Spinner from '../../layouts/Spinner';
 import { showAlert } from '../../features/alertSlice';
-import { deleteJob } from '../../features/jobSlice';
-import api from '../../utils/api';
+import { deleteJob, fetchJobById, fetchJobs } from '../../features/jobSlice';
+import { loadUser } from '../../features/authSlice';
 
 const Job = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const { id } = useParams();
-  const [job, setJob] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isJobOwner, setIsJobOwner] = useState(false);
-  const [error, setError] = useState(null);
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { job, loading, error } = useSelector((state) => state.jobs);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    const fetchJob = async () => {
-      try {
-        const res = await api.get(`/jobs/${id}`);
-        setJob(res.data);
-
-        if (isAuthenticated && user) {
-          const isOwner =
-            user.jobs?.some((j) => j.id === res.data.id) ||
-            res.data.postedBy === user.id;
-          setIsJobOwner(isOwner);
-        }
-      } catch (err) {
-        console.error('Error fetching job:', err);
-        setError('Job not found or failed to load.');
-      } finally {
-        setLoading(false);
+    const fetchJobData = async () => {
+      await dispatch(fetchJobById(id)).unwrap();
+      if (!user) {
+        dispatch(loadUser());
       }
     };
 
-    fetchJob();
-  }, [id, isAuthenticated, user]);
+    fetchJobData();
+  }, [id, dispatch, user]);
+
+  useEffect(() => {
+    if (job && user?.jobs) {
+      const isOwner = user.jobs.some((j) => j.id === job.id);
+      setIsJobOwner(isOwner);
+    }
+  }, [job, user]);
 
   if (loading) return <Spinner />;
   if (!job || error)
@@ -134,13 +126,13 @@ const Job = () => {
                   <h3 className='text-xl font-bold mb-6'>Manage Job</h3>
                   <Link
                     to={`/edit-job/${job.id}`}
-                    className='bg-indigo-500 hover:bg-indigo-600 text-white text-center font-bold py-1 px-3 rounded-full w-full focus:outline-none focus:shadow-outline block text-sm h-10 flex items-center justify-center'
+                    className='bg-indigo-500 hover:bg-indigo-600 text-white text-center font-bold py-1 px-3 rounded-full w-full focus:outline-none focus:shadow-outline text-sm h-10 flex items-center justify-center'
                   >
                     Edit Job
                   </Link>
                   <button
                     onClick={() => onDeleteClick(job.id)}
-                    className='bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-full w-full focus:outline-none focus:shadow-outline mt-3 block text-sm h-10 flex items-center justify-center'
+                    className='bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-full w-full focus:outline-none focus:shadow-outline mt-3 text-sm h-10 flex items-center justify-center'
                   >
                     Delete Job
                   </button>

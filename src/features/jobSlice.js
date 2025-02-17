@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../utils/api';
+import { loadUser } from './authSlice';
 
 export const fetchJobs = createAsyncThunk(
   'jobs/fetchJobs',
@@ -24,6 +25,22 @@ export const addJob = createAsyncThunk(
       return rejectWithValue(
         error.response?.data?.message || 'Failed to add job'
       );
+    }
+  }
+);
+
+export const fetchJobById = createAsyncThunk(
+  'jobs/fetchJobById',
+  async (jobId, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/jobs/${jobId}`);
+      return response.data;
+    } catch (error) {
+      console.error(
+        'API Fetch Job Error:',
+        error.response?.data || error.message
+      );
+      return rejectWithValue(error.response?.data || 'Failed to fetch job');
     }
   }
 );
@@ -87,6 +104,18 @@ const jobSlice = createSlice({
         state.jobs.push(action.payload);
       })
       .addCase(addJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchJobById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchJobById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.job = action.payload;
+      })
+      .addCase(fetchJobById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

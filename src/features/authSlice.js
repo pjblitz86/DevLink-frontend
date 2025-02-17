@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { showAlert } from './alertSlice';
 import { clearProfile } from './profileSlice';
+import { addJob } from './jobSlice';
 import api from '../utils/api';
 
 export const register = createAsyncThunk(
@@ -159,6 +160,13 @@ const authSlice = createSlice({
         state.token = null;
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
+      })
+      .addCase(addJob.fulfilled, (state, action) => {
+        state.loading = false;
+
+        if (state.user) {
+          state.user.jobs = [...state.user.jobs, action.payload];
+        }
       });
   }
 });
